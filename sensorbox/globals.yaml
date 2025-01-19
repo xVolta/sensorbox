@@ -1,0 +1,23 @@
+# Set up global variables
+globals:
+  - id: dbright
+    type: int
+    restore_value: false
+    initial_value: '0'
+  - id: temp_offset
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+
+# Set up temperature offset control
+number:
+  - platform: template
+    name: "Temperature Offset"
+    id: temp_offset_control
+    min_value: -10.0
+    max_value: 10.0
+    step: 0.1
+    initial_value: 0.0
+    set_action:
+      - lambda: |-
+        id(temp_offset) = x;

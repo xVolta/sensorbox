@@ -1,0 +1,36 @@
+# Set up display dimming from top button
+output:
+  - platform: ledc
+    pin: GPIO15
+    id: backlight_pwm
+
+light:
+  - platform: monochromatic
+    output: backlight_pwm
+    name: "Display Backlight"
+    id: back_light
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: top_btn
+    filters:
+      - delayed_on: 10ms
+      - delayed_off: 500ms
+    on_press:
+      then:
+        - lambda: |-
+            switch(id(dbright)){
+              case 0: id(dbright) = 3; id(back_light).turn_on().set_brightness(1.00).perform(); return;
+              case 1: id(dbright) = 0; id(back_light).turn_off().perform(); return;
+              case 2: id(dbright) = 1; id(back_light).turn_on().set_brightness(0.10).perform(); return;
+              case 3: id(dbright) = 2; id(back_light).turn_on().set_brightness(0.33).perform(); return;
+            }
+
+# Finished with display dimming
+

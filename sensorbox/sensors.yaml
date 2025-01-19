@@ -1,0 +1,233 @@
+sensor:
+  - platform: uptime
+    name: "Uptime"
+    id: uptime_sensor
+    update_interval: 5s
+    disabled_by_default: True
+
+  - platform: debug
+    free:
+      name: "Heap Free"
+      id: heap_free
+      disabled_by_default: True
+    loop_time:
+      name: "Loop Time"
+      id: loop_time
+      disabled_by_default: True
+
+  - platform: aht10
+    #address: 0x38
+    i2c_id: i2c_main
+    variant: AHT20
+    temperature:
+      name: "AHT20 Temperature"
+      id: temp_aht20
+    humidity:
+      name: "AHT20 Humidity"
+      id: hum_aht20
+    update_interval: 10s
+
+  - platform: bmp280_i2c
+    address: 0x77
+    i2c_id: i2c_main
+    temperature:
+      name: "BMP280 Temperature"
+      id: temp_bmp280
+      oversampling: 16x
+    pressure:
+      name: "BMP280 Pressure"
+      id: pres_bmp280
+    update_interval: 10s
+
+  - platform: sht4x
+    #addr 0x44
+    i2c_id: i2c_main
+    temperature:
+      name: "SHT40 Temperature"
+      id: temp_sht40
+    humidity:
+      name: "SHT40 Relative Humidity"
+      id: hum_sht40
+    update_interval: 10s
+
+  - platform: scd4x
+    #address: 0x62
+    i2c_id: i2c_main
+    co2:
+      name: "SCD40 CO2"
+      id: co2_scd40
+    temperature:
+      name: "SCD40 Temperature"
+      id: temp_scd40
+    humidity:
+      name: "SCD40 Humidity"
+      id: hum_scd40
+    update_interval: 30s
+
+  - platform: ens160_i2c
+    address: 0x53
+    i2c_id: i2c_2
+    eco2:
+      name: "ENS160 eCO2"
+      id: eco2_ens160
+    tvoc:
+      name: "ENS160 TVOC"
+      id: tvoc_ens160
+      filters: 
+        - exponential_moving_average: 
+            send_every: 1
+            alpha: 0.5
+    aqi:
+      name: "ENS160 Air Quality Index"
+      id: aqi_ens160
+    update_interval: 10s
+    compensation:
+      temperature: temp_aht20_ens
+      humidity: hum_aht20_ens
+
+  - platform: aht10
+    #address: 0x38
+    i2c_id: i2c_2
+    variant: AHT20
+    temperature:
+      name: "AHT20/ENS160 Temperature"
+      id: temp_aht20_ens
+      disabled_by_default: True
+    humidity:
+      name: "AHT20/ENS160 Humidity"
+      id: hum_aht20_ens
+      disabled_by_default: True
+    update_interval: 10s
+
+  - platform: sgp30
+    i2c_id: i2c_main
+    address: 0x58
+    eco2:
+      name: "SGP30 eCO2"
+      id: eco2_sgp30
+      accuracy_decimals: 0
+      filters: 
+        - exponential_moving_average: 
+            send_every: 1
+            alpha: 0.2
+    tvoc:
+      name: "SGP30 TVOC"
+      id: tvoc_sgp30
+      accuracy_decimals: 1
+      filters: 
+        - exponential_moving_average: 
+            send_every: 1
+            alpha: 0.2
+    store_baseline: yes
+    update_interval: 5s
+    compensation: 
+      humidity_source: hum_aht20
+      temperature_source: temp_aht20
+
+  - platform: sgp4x
+    i2c_id: i2c_main
+    #address: 0x59
+    voc:
+      name: "SGP41 VOC Index"
+      id: aqi_voc_sgp41
+      icon: "mdi:air-filter"
+      device_class: aqi
+      state_class: measurement
+      unit_of_measurement: "index points"
+    nox:
+      name: "SGP41 NOx Index"
+      id: aqi_nox_sgp41
+      icon: "mdi:air-filter"
+      device_class: aqi
+      state_class: measurement
+      unit_of_measurement: "index points"
+    compensation: 
+      humidity_source: hum_aht20
+      temperature_source: temp_aht20
+    store_baseline: True
+    update_interval: 10s
+
+  - platform: template
+    name: "ZE08 CH2O"
+    state_class: measurement
+    device_class: volatile_organic_compounds
+    unit_of_measurement: ppb
+    accuracy_decimals: 0
+    id: ch2o_ze08
+    filters: 
+      - filter_out: 2000.0
+      - exponential_moving_average: 
+          send_every: 1
+          alpha: 0.5
+    update_interval: 10s
+
+  - platform: pmsx003
+    type: PMSX003 
+    update_interval: 120s
+    uart_id: uart_pms
+    pm_1_0:
+      name: "PMS Particulate Matter <1.0µm Concentration"
+      id: pm1_pms
+    pm_2_5:
+      name: "PMS Particulate Matter <2.5µm Concentration"
+      id: pm25_pms
+    pm_10_0:
+      name: "PMS Particulate Matter <10.0µm Concentration"
+      id: pm10_pms
+
+  - platform: sen5x
+    i2c_id: i2c_2
+    id: sen5xseries
+    pm_1_0:
+      name: "SEN5x Particulate Matter <1.0µm Concentration"
+      id: pm1_sen5x
+      accuracy_decimals: 1
+    pm_2_5:
+      name: "SEN5x Particulate Matter <2.5µm Concentration"
+      id: pm25_sen5x
+      accuracy_decimals: 1
+    pm_4_0:
+      name: "SEN5x Particulate Matter <4.0µm Concentration"
+      id: pm40_sen5x
+      accuracy_decimals: 1
+    pm_10_0:
+      name: "SEN5x Particulate Matter <10.0µm Concentration"
+      id: pm10_sen5x
+      accuracy_decimals: 1
+    temperature:
+      name: "SEN5x Temperature"
+      id: temp_sen5x
+      accuracy_decimals: 1
+    humidity:
+      name: "SEN5x Humidity"
+      id: hum_sen5x
+      accuracy_decimals: 0
+    voc:
+      name: "SEN5x VOC"
+      id: tvoc_sen5x
+      algorithm_tuning:
+        index_offset: 100
+        learning_time_offset_hours: 12
+        learning_time_gain_hours: 12
+        gating_max_duration_minutes: 180
+        std_initial: 50
+        gain_factor: 230
+    nox:
+      name: "SEN5x NOx"
+      id: nox_sen5x
+      algorithm_tuning:
+        index_offset: 100
+        learning_time_offset_hours: 12
+        learning_time_gain_hours: 12
+        gating_max_duration_minutes: 180
+        std_initial: 50
+        gain_factor: 230
+    temperature_compensation:
+      offset: 0
+      normalized_offset_slope: 0
+      time_constant: 0
+    acceleration_mode: low
+    store_baseline: true
+    address: 0x69
+    update_interval: 10s
+

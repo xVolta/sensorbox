@@ -1,0 +1,25 @@
+# Sensorbox v2 config for PCB SBR1
+# based on Tom's config r2 (20241130) from https://go/toms3d.org/sbr1
+# Version 1.0 - LVGL Display - 2025-01-01 - Volta
+#  - Supports all original sensors
+#  - Supports custom colorization & color ranges (see: settings.yaml)
+#  - Optimized for legibility & maintainability
+#  - Supports multiple instances with code reuse, simply make copies of
+#    this file with unique "id" in the substitutions for additional
+#    instances.
+# 
+# Most of what you'll want to customize is in sensorbox/settings.yaml
+substitutions: !include
+  file: sensorbox/settings.yaml
+  vars:
+    id: 1
+    location: Office
+
+# Hardware (including ESPHome config) and display (LVGL) setup.
+# You probably won't need to change anything in here unless you
+# need to boost WiFi power, rearrange the display layout, or 
+# add new sensors.
+<<: !include sensorbox/globals.yaml
+<<: !include sensorbox/hardware.yaml
+<<: !include sensorbox/display.yaml
+<<: !include sensorbox/sensors.yaml

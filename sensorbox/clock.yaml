@@ -1,0 +1,39 @@
+time:
+  - platform: homeassistant
+    id: esptime
+    on_time:
+      - seconds: 0
+        minutes: /1
+        then:
+          - lvgl.label.update:
+              id: datetime
+              text:
+                time_format: "%F  %R"
+                time: !lambda return id(esptime).now();
+          - if:
+              condition:
+                api.connected:
+              then:
+                - lvgl.label.update:
+                    id: ha_status
+                    text: ${ha_icon}
+                    text_color: white
+              else:
+                - lvgl.label.update:
+                    id: ha_status
+                    text: ${ha_icon}
+                    text_color: red
+          - if:
+              condition:
+                wifi.connected:
+              then:
+                - lvgl.label.update:
+                    id: ha_status
+                    text: ${ha_icon}
+                    text_color: white
+              else:
+                - lvgl.label.update:
+                    id: ha_status
+                    text: ${ha_icon}
+                    text_color: red
+

@@ -1,0 +1,54 @@
+# Fonts
+font:
+  - file: "gfonts://Rubik@500"
+    id: font_heading
+    size: 16
+    bpp: 8
+    ignore_missing_glyphs: true
+    glyphsets:
+      - GF_Latin_Kernel
+      - GF_Latin_Plus
+    extras:
+      - file: 'fonts/materialdesignicons-webfont.ttf'
+        glyphs: [
+          "\U000F07D0",  # ha_icon
+          "\U000F087B",  # no_ha_icon
+          "\U000F05A9",  # wifi_icon
+          "\U000F16BC",  # no_wifi_icon
+          ]
+  - file: "gfonts://Rubik@400"
+    id: font_heading_sm
+    size: 14
+    bpp: 8
+    ignore_missing_glyphs: true
+    glyphsets:
+      - GF_Latin_Kernel
+      - GF_Latin_Plus
+  - file: "gfonts://Rubik@400"
+    id: font_value_lg
+    size: 40
+    bpp: 8
+    ignore_missing_glyphs: true
+    glyphs: [ "0123456789., -:" ]
+  - file: "gfonts://Rubik@400"
+    id: font_value
+    size: 30
+    bpp: 8
+    ignore_missing_glyphs: true
+    glyphs: [ "0123456789., -:" ]
+  - file: "gfonts://Rubik@300"
+    id: font_label
+    size: 16
+    bpp: 8
+    ignore_missing_glyphs: true
+    glyphsets:
+      - GF_Latin_Kernel
+      - GF_Latin_Plus
+  - file: "gfonts://Rubik@300"
+    id: font_label_sm
+    size: 14
+    bpp: 8
+    ignore_missing_glyphs: true
+    glyphsets:
+      - GF_Latin_Kernel
+      - GF_Latin_Plus

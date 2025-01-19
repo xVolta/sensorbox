@@ -1,0 +1,7 @@
+label:
+  bg_color: black
+  text_color: white
+button:
+  bg_color: black
+  text_color: white
+  radius: 0

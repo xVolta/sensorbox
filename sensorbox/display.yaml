@@ -1,0 +1,250 @@
+<<: !include clock.yaml
+<<: !include fonts.yaml
+<<: !include top-button.yaml
+<<: !include textsensors.yaml
+
+lvgl:
+  theme: !include theme.yaml
+  style_definitions: !include styles.yaml
+  pages:
+    - id: main_page
+      bg_color: black
+      bg_opa: COVER
+      widgets:
+        - label:
+            id: datetime
+            styles: style_heading
+            text: "SensorBox"
+            align: TOP_MID
+            text_align: CENTER
+            height: 30
+        - label:
+            id: ha_status
+            styles: style_icon
+            text: ${no_ha_icon}
+            align: TOP_LEFT
+            text_align: LEFT
+            text_color: red
+            height: 30
+            x: 2
+        - label:
+            id: wifi_status
+            styles: style_icon
+            text: ${no_wifi_icon}
+            align: TOP_RIGHT
+            text_align: RIGHT
+            text_color: red
+            height: 30
+            x: -2
+        - obj:
+            x: 0
+            y: 30
+            align: TOP_LEFT
+            width: 240
+            height: 290
+            pad_all: 0
+            bg_opa: COVER
+            bg_color: black
+            border_opa: TRANSP
+            layout:
+              type: FLEX
+              flex_flow: ROW_WRAP
+              flex_align_main: CENTER
+              flex_align_cross: END
+              pad_row: 0
+              pad_column: 0
+            widgets:
+              - button:
+                  width: 118
+                  height: 46
+                  widgets:
+                    - label:
+                        id: temperature
+                        text: "0.00"
+                        align: LEFT_MID
+                        styles: style_value_lg
+                        recolor: true
+                    - label:
+                        text: ${deg_c_str}
+                        align_to:
+                          id: temperature
+                          align: OUT_RIGHT_MID
+                        text_align: RIGHT
+                        styles: style_units_lg
+              - button:
+                  width: 118
+                  height: 46
+                  widgets:
+                    - label:
+                        id: humidity
+                        text: "0.00"
+                        align: LEFT_MID
+                        styles: style_value_lg
+                        recolor: true
+                    - label:
+                        text: "RH\n%"
+                        align_to:
+                          id: humidity
+                          align: OUT_RIGHT_TOP
+                        text_align: RIGHT
+                        styles: style_units
+              - button:
+                  width: 118
+                  height: 42
+                  widgets:
+                    - label:
+                        id: co2
+                        text: "0000"
+                        text_align: LEFT
+                        styles: style_value
+                        long_mode: CLIP
+                        recolor: true
+                    - label:
+                        text: "${co2_str}\nppm"
+                        align_to:
+                          id: co2
+                          align: OUT_RIGHT_TOP
+                        text_align: RIGHT
+                        styles: style_units
+              - button:
+                  width: 118
+                  height: 42
+                  widgets:
+                    - label:
+                        id: pressure
+                        text: "0000"
+                        text_align: LEFT
+                        styles: style_value
+                        long_mode: CLIP
+                        recolor: true
+                    - label:
+                        text: "hPa"
+                        align_to:
+                          id: pressure
+                          align: OUT_RIGHT_MID
+                        text_align: RIGHT
+                        styles: style_units
+              - label:
+                  width: 238
+                  height: 30
+                  text: "Particulates (${ug_m3_str})"
+                  text_align: CENTER
+                  styles: style_heading
+              - button:
+                  width: 58
+                  height: 22
+                  widgets:
+                    - label:
+                        text: "PM1"
+                        align: CENTER
+                        styles: style_label
+              - button:
+                  width: 58
+                  height: 22
+                  widgets:
+                    - label:
+                        text: "PM2.5"
+                        align: CENTER
+                        styles: style_label
+              - button:
+                  width: 58
+                  height: 22
+                  widgets:
+                    - label:
+                        text: "PM4.0"
+                        align: CENTER
+                        styles: style_label
+              - button:
+                  width: 58
+                  height: 22
+                  widgets:
+                    - label:
+                        text: "PM10"
+                        align: CENTER
+                        styles: style_label
+              - button:
+                  width: 58
+                  height: 40
+                  widgets:
+                    - label:
+                        id: pm_1_0
+                        text: "00.0"
+                        align: CENTER
+                        styles: style_value
+                        long_mode: CLIP
+                        recolor: true
+              - button:
+                  width: 58
+                  height: 40
+                  widgets:
+                    - label:
+                        id: pm_2_5
+                        text: "00.0"
+                        align: CENTER
+                        styles: style_value
+                        long_mode: CLIP
+                        recolor: true
+              - button:
+                  width: 58
+                  height: 40
+                  widgets:
+                    - label:
+                        id: pm_4_0
+                        text: "00.0"
+                        align: CENTER
+                        styles: style_value
+                        long_mode: CLIP
+                        recolor: true
+              - button:
+                  width: 58
+                  height: 40
+                  widgets:
+                    - label:
+                        id: pm_10_0
+                        text: "00.0"
+                        align: CENTER
+                        styles: style_value
+                        long_mode: CLIP
+                        recolor: true
+              - label:
+                  width: 238
+                  height: 30
+                  text: "VOCs (ppb)"
+                  text_align: CENTER
+                  styles: style_heading
+              - button:
+                  width: 118
+                  height: 24
+                  widgets:
+                    - label:
+                        text: "Total"
+                        align: CENTER
+                        styles: style_label
+              - button:
+                  width: 118
+                  height: 24
+                  widgets:
+                    - label:
+                        text: ${ch2o_str}
+                        align: CENTER
+                        styles: style_label
+              - button:
+                  width: 118
+                  height: 44
+                  widgets:
+                    - label:
+                        id: vocs
+                        text: "000"
+                        align: CENTER
+                        styles: style_value_lg
+                        recolor: true
+              - button:
+                  width: 118
+                  height: 44
+                  widgets:
+                    - label:
+                        id: ch2o
+                        text: "000"
+                        align: CENTER
+                        styles: style_value_lg
+                        recolor: true
