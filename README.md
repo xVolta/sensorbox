@@ -7,7 +7,11 @@ My intention is to develop this into a project that can be used for both monitor
 ### Installation
 Simply install these files, preserving directory structure, into /homeassistant/esphome/ on your HA server, then install to devices in the usual ESPHome way.  For multiple sensorboxes, simply make copies of sensorbox1.yaml, changing (at least) the ID for each instance.
 
+---
+
 Incorporates [MaterialDesign-Webfont](https://github.com/Templarian/MaterialDesign-Webfont).
+
+---
 
 Shield: [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
 

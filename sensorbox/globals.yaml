@@ -20,4 +20,4 @@ number:
     initial_value: 0.0
     set_action:
       - lambda: |-
-        id(temp_offset) = x;
+          id(temp_offset) = x;
