@@ -119,7 +119,7 @@ sensor:
             send_every: 1
             alpha: 0.2
     store_baseline: yes
-    update_interval: 5s
+    update_interval: 1s
     compensation: 
       humidity_source: hum_aht20
       temperature_source: temp_aht20

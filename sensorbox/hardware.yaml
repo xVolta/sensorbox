@@ -17,6 +17,7 @@ esphome:
 esp32:
   board: esp32-s2-saola-1
   framework:
+    #type: esp-idf # not all sensors supported by esp-idf framework, notably the AHT20+BMP280 used for temp/humidity/pressure
     type: arduino
 
 logger:

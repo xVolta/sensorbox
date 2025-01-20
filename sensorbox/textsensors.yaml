@@ -7,7 +7,6 @@ text_sensor:
   - platform: template
     id: "temperature_disp"
     name: "Temperature"
-    internal: True
     lambda: |-
       float temps[6] = {id(temp_sen5x).state,
                         id(temp_sht40).state,
@@ -35,7 +34,6 @@ text_sensor:
   - platform: template
     id: "humidity_disp"
     name: "Humidity"
-    internal: True
     lambda: |-
       float hums[5] = {id(hum_sen5x).state,
                        id(hum_sht40).state,
@@ -66,7 +64,6 @@ text_sensor:
   - platform: template
     id: "co2_disp"
     name: "CO2"
-    internal: True
     lambda: |-
       float cos[3] = {id(co2_scd40).state,
                       id(eco2_ens160).state,
@@ -92,7 +89,6 @@ text_sensor:
   - platform: template
     id: "pressure_disp"
     name: "Pressure"
-    internal: True
     lambda: |-
       char str[20] = {'0'};
       if (!isnan(id(pres_bmp280).state)) { snprintf(str, sizeof str, "%.0f", id(pres_bmp280).state); }
@@ -107,7 +103,6 @@ text_sensor:
   - platform: template
     id: "voc_disp"
     name: "VOCs"
-    internal: True
     lambda: |-
       float vocs[3] = {id(tvoc_sen5x).state,
                        id(tvoc_ens160).state,
@@ -133,7 +128,6 @@ text_sensor:
   - platform: template
     id: ch2o_disp
     name: "CH2O display"
-    internal: True
     lambda: |-
       float ch2o = 0;
       if (!isnan(id(ch2o_ze08).state)) { ch2o = id(ch2o_ze08).state; }
@@ -154,7 +148,6 @@ text_sensor:
   - platform: template
     id: pm1_0_disp
     name: "PM1.0 Display"
-    internal: True
     lambda: |-
       float pm1s[2] = {id(pm1_sen5x).state,
                        id(pm1_pms).state};
@@ -179,7 +172,6 @@ text_sensor:
   - platform: template
     id: pm2_5_disp
     name: "PM2.5 Display"
-    internal: True
     lambda: |-
       float pm25s[2] = {id(pm25_sen5x).state,
                         id(pm25_pms).state};
@@ -204,7 +196,6 @@ text_sensor:
   - platform: template
     id: pm4_0_disp
     name: "PM4.0 Display"
-    internal: True
     lambda: |-
       float pm40s[1] = {id(pm40_sen5x).state};
       float pm40 = 0;
@@ -228,7 +219,6 @@ text_sensor:
   - platform: template
     id: pm10_0_disp
     name: "PM10.0 Display"
-    internal: True
     lambda: |-
       float pm10s[2] = {id(pm10_sen5x).state,
                         id(pm10_pms).state};
