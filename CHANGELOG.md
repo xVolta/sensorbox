@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 
+## [0.3.1] - 2025-02-24
+### Fixed
+- Adjusted hardware.yaml for breaking changes in ESPHome 2025.2.0
+
 ## [0.3.0] - 2025-01-20 [Initial GitHub Release]
 ### Added
 - Support for adjustable temperature offset, as suggested by [@Gerald_71276](https://www.printables.com/make/2288220) and [@DesasterMan](https://www.printables.com/make/2347551?comment_id=2347551).
