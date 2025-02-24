@@ -85,10 +85,14 @@ web_server:
 debug:
   update_interval: 5s
 
+# ili9xxx needs PSRAM but stupidly doesn't configure it by default anymore starting in ESPHome 2025.2.0.  The fix is simple since we want the defaults.
+psram:
+
 # Set up the display
 display:
   - platform: ili9xxx
     model: ILI9341
+    color_palette: 8BIT
     cs_pin: GPIO03
     dc_pin: GPIO04
     reset_pin: GPIO06
