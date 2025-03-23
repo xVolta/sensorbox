@@ -163,7 +163,7 @@ sensor:
 
   - platform: pmsx003
     type: PMSX003 
-    update_interval: 120s
+    update_interval: 30s
     uart_id: uart_pms
     pm_1_0:
       name: "PMS Particulate Matter <1.0µm Concentration"
