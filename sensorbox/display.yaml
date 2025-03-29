@@ -151,6 +151,7 @@ lvgl:
                   height: 22
                   widgets:
                     - label:
+                        id: pm_4_0_label
                         text: "PM4.0"
                         align: CENTER
                         styles: style_label
@@ -189,7 +190,7 @@ lvgl:
                   height: 40
                   widgets:
                     - label:
-                        id: pm_4_0
+                        id: pm_4_0_value
                         text: "00.0"
                         align: CENTER
                         styles: style_value
