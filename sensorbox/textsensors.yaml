@@ -206,25 +206,72 @@ text_sensor:
     name: "PM4.0 Display"
     internal: true
     lambda: |-
-      float pm40s[1] = {id(pm40_sen5x).state};
+      float pm40s[4] = {id(pm40_sen5x).state,
+                        id(pm1_pms).state,
+                        id(pm25_pms).state,
+                        id(pm10_pms).state};
       float pm40 = 0;
-      for (int i = 0; i < 1; i++) {
-        if (!isnan(pm40s[i])) { pm40 = pm40s[i]; break; }
+
+      if (!isnan(pm40s[0])) {   // Priority #1: Use direct sen5x pm40 sensor reading if available
+        pm40 = pm40s[0];
       }
+   
+      else if (!isnan(pm40s[1]) && !isnan(pm40s[2]) && !isnan(pm40s[3]) &&  // Priority #2: Interpolate using PMS sensors (PM1.0, PM2.5, and PM10.0)
+               pm40s[1] <= pm40s[2] && pm40s[2] <= pm40s[3]) {
+
+        float log_pm1 = log(1.0);
+        float log_pm25 = log(2.5);
+        float log_pm4 = log(4.0);
+        float log_pm10 = log(10.0);
+
+        if (log_pm4 <= log_pm25) {
+          // Interpolation logic: Interpolate between PM1.0 and PM2.5
+          pm40 = pm40s[1] + (pm40s[2] - pm40s[1]) * (log_pm4 - log_pm1) / (log_pm25 - log_pm1);
+        } else {
+          // Interpolation logic: Interpolate between PM2.5 and PM10.0
+          pm40 = pm40s[2] + (pm40s[3] - pm40s[2]) * (log_pm4 - log_pm25) / (log_pm10 - log_pm25);
+        }
+
+        // Interpolation logic:  Constrain the value: PM4.0 cannot be less than PM2.5 or more than PM10.0
+        pm40 = std::min(std::max(pm40, pm40s[2]), pm40s[3]);
+      }
+
       char str[20] = {'0'};
-      if (pm40 > $pm40_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", pm40); }
-      else if (pm40 > $pm40_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", pm40); }
-      else if (pm40 > $pm40_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", pm40); }
-      else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", pm40); }
+      if (!isnan(pm40)) {
+        if (pm40 > $pm40_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", pm40); }
+        else if (pm40 > $pm40_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", pm40); }
+        else if (pm40 > $pm40_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", pm40); }
+        else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", pm40); }
+      } else {
+        snprintf(str, sizeof str, "N/A");
+      }
       return ((std::string) str);
     on_value:
       - lvgl.label.update:
-          id: pm_4_0
+          id: pm_4_0_value
           text:
             format: "%s"
             args: [ 'x.c_str()' ]
     update_interval: 10s
-      
+
+  - platform: template
+    id: pm4_label_disp
+    name: "PM4 Label Display"
+    internal: true
+    lambda: |-
+      if (!isnan(id(pm40_sen5x).state)) {
+        return {"PM4.0"};                    // SEN5x sensor available, direct PM4.0 measurement
+      } else {
+        return {"PM4.0e"};                   // SEN5x unavailable, extrapolated PM4.0 from PMS sensor
+      }
+    update_interval: 10s
+    on_value:
+      - lvgl.label.update:
+          id: pm_4_0_label
+          text:
+            format: "%s"
+            args: [ 'x.c_str()' ]
+
   - platform: template
     id: pm10_0_disp
     name: "PM10.0 Display"
