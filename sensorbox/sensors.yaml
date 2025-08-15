@@ -22,9 +22,11 @@ sensor:
     temperature:
       name: "AHT20 Temperature"
       id: temp_aht20
+      disabled_by_default: True
     humidity:
       name: "AHT20 Humidity"
       id: hum_aht20
+      disabled_by_default: True
     update_interval: 10s
 
   - platform: bmp280_i2c
@@ -34,9 +36,11 @@ sensor:
       name: "BMP280 Temperature"
       id: temp_bmp280
       oversampling: 16x
+      disabled_by_default: True
     pressure:
       name: "BMP280 Pressure"
       id: pres_bmp280
+      disabled_by_default: True
     update_interval: 10s
 
   - platform: sht4x
@@ -45,9 +49,11 @@ sensor:
     temperature:
       name: "SHT40 Temperature"
       id: temp_sht40
+      disabled_by_default: True
     humidity:
       name: "SHT40 Relative Humidity"
       id: hum_sht40
+      disabled_by_default: True
     update_interval: 10s
 
   - platform: scd4x
@@ -56,12 +62,15 @@ sensor:
     co2:
       name: "SCD40 CO2"
       id: co2_scd40
+      disabled_by_default: True
     temperature:
       name: "SCD40 Temperature"
       id: temp_scd40
+      disabled_by_default: True
     humidity:
       name: "SCD40 Humidity"
       id: hum_scd40
+      disabled_by_default: True
     update_interval: 30s
 
   - platform: ens160_i2c
@@ -70,9 +79,11 @@ sensor:
     eco2:
       name: "ENS160 eCO2"
       id: eco2_ens160
+      disabled_by_default: True
     tvoc:
       name: "ENS160 TVOC"
       id: tvoc_ens160
+      disabled_by_default: True
       filters: 
         - exponential_moving_average: 
             send_every: 1
@@ -80,6 +91,7 @@ sensor:
     aqi:
       name: "ENS160 Air Quality Index"
       id: aqi_ens160
+      disabled_by_default: True
     update_interval: 10s
     compensation:
       temperature: temp_aht20_ens
@@ -105,6 +117,7 @@ sensor:
     eco2:
       name: "SGP30 eCO2"
       id: eco2_sgp30
+      disabled_by_default: True
       accuracy_decimals: 0
       filters: 
         - exponential_moving_average: 
@@ -113,6 +126,7 @@ sensor:
     tvoc:
       name: "SGP30 TVOC"
       id: tvoc_sgp30
+      disabled_by_default: True
       accuracy_decimals: 1
       filters: 
         - exponential_moving_average: 
@@ -130,6 +144,7 @@ sensor:
     voc:
       name: "SGP41 VOC Index"
       id: aqi_voc_sgp41
+      disabled_by_default: True
       icon: "mdi:air-filter"
       device_class: aqi
       state_class: measurement
@@ -137,6 +152,7 @@ sensor:
     nox:
       name: "SGP41 NOx Index"
       id: aqi_nox_sgp41
+      disabled_by_default: True
       icon: "mdi:air-filter"
       device_class: aqi
       state_class: measurement
@@ -154,6 +170,7 @@ sensor:
     unit_of_measurement: ppb
     accuracy_decimals: 0
     id: ch2o_ze08
+    disabled_by_default: True
     filters: 
       - filter_out: 2000.0
       - exponential_moving_average: 
@@ -168,12 +185,15 @@ sensor:
     pm_1_0:
       name: "PMS Particulate Matter <1.0µm Concentration"
       id: pm1_pms
+      disabled_by_default: True
     pm_2_5:
       name: "PMS Particulate Matter <2.5µm Concentration"
       id: pm25_pms
+      disabled_by_default: True
     pm_10_0:
       name: "PMS Particulate Matter <10.0µm Concentration"
       id: pm10_pms
+      disabled_by_default: True
 
   - platform: sen5x
     i2c_id: i2c_2
@@ -181,30 +201,37 @@ sensor:
     pm_1_0:
       name: "SEN5x Particulate Matter <1.0µm Concentration"
       id: pm1_sen5x
+      disabled_by_default: True
       accuracy_decimals: 1
     pm_2_5:
       name: "SEN5x Particulate Matter <2.5µm Concentration"
       id: pm25_sen5x
+      disabled_by_default: True
       accuracy_decimals: 1
     pm_4_0:
       name: "SEN5x Particulate Matter <4.0µm Concentration"
       id: pm40_sen5x
+      disabled_by_default: True
       accuracy_decimals: 1
     pm_10_0:
       name: "SEN5x Particulate Matter <10.0µm Concentration"
       id: pm10_sen5x
+      disabled_by_default: True
       accuracy_decimals: 1
     temperature:
       name: "SEN5x Temperature"
       id: temp_sen5x
+      disabled_by_default: True
       accuracy_decimals: 1
     humidity:
       name: "SEN5x Humidity"
       id: hum_sen5x
+      disabled_by_default: True
       accuracy_decimals: 0
     voc:
       name: "SEN5x VOC"
       id: tvoc_sen5x
+      disabled_by_default: True
       algorithm_tuning:
         index_offset: 100
         learning_time_offset_hours: 12
@@ -215,6 +242,7 @@ sensor:
     nox:
       name: "SEN5x NOx"
       id: nox_sen5x
+      disabled_by_default: True
       algorithm_tuning:
         index_offset: 100
         learning_time_offset_hours: 12
@@ -230,4 +258,74 @@ sensor:
     store_baseline: true
     address: 0x69
     update_interval: 10s
+
+  - platform: template
+    name: "Temperature"
+    id: best_temp
+    update_interval: never
+    device_class: temperature
+    icon: mdi:thermometer
+
+  - platform: template
+    name: "Humidity"
+    id: best_humidity
+    update_interval: never
+    device_class: humidity
+    icon: mdi:water-percent
+
+  - platform: template
+    name: "CO2"
+    id: best_co2
+    update_interval: never
+    device_class: carbon_dioxide
+    icon: mdi:molecule-co2
+
+  - platform: template
+    name: "Pressure"
+    id: best_pressure
+    update_interval: never
+    device_class: pressure
+    icon: mdi:gauge
+
+  - platform: template
+    name: "VOCs"
+    id: best_voc
+    update_interval: never
+    device_class: volatile_organic_compounds_parts
+    icon: mdi:radiator
+
+  - platform: template
+    name: "CH2O"
+    id: best_ch2o
+    update_interval: never
+    device_class: volatile_organic_compounds_parts
+    icon: mdi:molecule
+
+  - platform: template
+    name: "PM 1.0"
+    id: best_pm1
+    update_interval: never
+    device_class: pm1
+    icon: mdi:chemical-weapon
+
+  - platform: template
+    name: "PM 2.5"
+    id: best_pm25
+    update_interval: never
+    device_class: pm25
+    icon: mdi:chemical-weapon
+
+  - platform: template
+    name: "PM 4.0"
+    id: best_pm40
+    update_interval: never
+    device_class: pm10
+    icon: mdi:chemical-weapon
+
+  - platform: template
+    name: "PM 10"
+    id: best_pm10
+    update_interval: never
+    device_class: pm10
+    icon: mdi:chemical-weapon
 

@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 
+## [0.3.2] - 2025-08-14
+### Changed
+- Tweaks for better integration with Home Assistant dashboards.
+  - Expose backlight as a control instead of a light.
+  - Expose temperature and humidity offsets as configuration entities instead of control entities.
+  - Expose best available sensor data for Temperature, Humidity, Pressure, CO2, PM, VOC, and CH2O to HA, using the same logic used for on-device LVGL display.
+  - Individual sensor data disabled by default to avoid polluting HA dashboards.
+
 ## [0.3.1] - 2025-02-24
 ### Fixed
 - Adjusted hardware.yaml for breaking changes in ESPHome 2025.2.0

@@ -9,6 +9,7 @@ light:
     output: backlight_pwm
     name: "Display Backlight"
     id: back_light
+    internal: true
 
 binary_sensor:
   - platform: gpio
@@ -26,11 +27,11 @@ binary_sensor:
       then:
         - lambda: |-
             switch(id(dbright)){
-              case 0: id(dbright) = 3; id(back_light).turn_on().set_brightness(1.00).perform(); return;
-              case 1: id(dbright) = 0; id(back_light).turn_off().perform(); return;
-              case 2: id(dbright) = 1; id(back_light).turn_on().set_brightness(0.10).perform(); return;
-              case 3: id(dbright) = 2; id(back_light).turn_on().set_brightness(0.33).perform(); return;
+              case 0: id(dbright) = 4; id(backlight_brightness_control).make_call().set_value(100).perform(); return;
+              case 1: id(dbright) = 0; id(backlight_brightness_control).make_call().set_value(0).perform(); return;
+              case 2: id(dbright) = 1; id(backlight_brightness_control).make_call().set_value(5).perform(); return;
+              case 3: id(dbright) = 2; id(backlight_brightness_control).make_call().set_value(10).perform(); return;
+              case 4: id(dbright) = 3; id(backlight_brightness_control).make_call().set_value(33).perform(); return;
             }
 
 # Finished with display dimming
-
