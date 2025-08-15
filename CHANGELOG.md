@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Deprecated
 ### Removed
-### Fixed
-- Don't display fields for sensors that aren't present
 ### Security
+
+## [0.4.1] - 2025-08-15
+### Fixed
+- Hide display fields for missing sensor data (not present, not reporting, etc.)
 
 ## [0.4.0] - 2025-08-14
 ### Added

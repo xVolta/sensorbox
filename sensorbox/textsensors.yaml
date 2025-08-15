@@ -15,23 +15,37 @@ text_sensor:
                         id(temp_scd40).state,
                         id(temp_aht20_ens).state,
                         id(temp_bmp280).state};
-      float temp = 0;
+      float temp = NAN;
       for (int i = 0; i < 6; i++) {
         if (!isnan(temps[i])) { temp = temps[i] + id(temp_offset); break; }
       }
-      id(best_temp).publish_state(temp);
-      id(temp_f).publish_state((temp * 9.0 / 5.0) + 32.0);
-      char str[20] = {'0'};
-      if (temp < $temp_cold) { snprintf(str, sizeof str, "#%s %.1f#", "$cold_hex", temp); }
-      else if (temp > $temp_hot) { snprintf(str, sizeof str, "#%s %.1f#", "$hot_hex", temp); }
-      else { snprintf(str, sizeof str, "#%s %.1f#", "$comfort_hex", temp); }
-      return ((std::string) str);
+      if (!isnan(temp)) {
+        id(best_temp).publish_state(temp);
+        id(temp_f).publish_state((temp * 9.0 / 5.0) + 32.0);
+        char str[20] = {'0'};
+        if (temp < $temp_cold) { snprintf(str, sizeof str, "#%s %.1f#", "$cold_hex", temp); }
+        else if (temp > $temp_hot) { snprintf(str, sizeof str, "#%s %.1f#", "$hot_hex", temp); }
+        else { snprintf(str, sizeof str, "#%s %.1f#", "$comfort_hex", temp); }
+        return ((std::string) str);
+      } else {
+        char str[20] = {'0'};
+        id(best_temp).publish_state(temp);
+        id(temp_f).publish_state(temp);
+        return((std::string) str);
+      }
     on_value:
-      - lvgl.label.update:
-          id: temperature
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_temp).state);
+          then:
+            - lvgl.widget.hide: temp_widget
+          else:
+            - lvgl.widget.show: temp_widget
+            - lvgl.label.update:
+                id: temperature
+                text:
+                    format: "%s"
+                    args: [ 'x.c_str()' ]
     update_interval: 10s
 
   - platform: template
@@ -44,12 +58,13 @@ text_sensor:
                        id(hum_aht20).state,
                        id(hum_scd40).state,
                        id(hum_aht20_ens).state};
-      float hum = 0;
+      float hum = NAN;
       for (int i = 0; i < 5; i++) {
         if (!isnan(hums[i])) { hum = hums[i] + id(hum_offset); break; }
       }
       id(best_humidity).publish_state(hum);
       char str[20] = {'0'};
+      if (isnan(hum)) { return((std::string) str); }
       if (hum > $humid_high) { snprintf(str, sizeof str, "#%s %.1f#", "$high_hex", hum); }
       else if (hum < $dry_high) { snprintf(str, sizeof str, "#%s %.1f#", "$high_hex", hum); }
       else if (hum > $humid_medium) { snprintf(str, sizeof str, "#%s %.1f#", "$medium_hex", hum); }
@@ -59,11 +74,18 @@ text_sensor:
       else { snprintf(str, sizeof str, "#%s %.1f#", "$safe_hex", hum); }
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: humidity
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_humidity).state);
+          then:
+            - lvgl.widget.hide: humidity_widget
+          else:
+            - lvgl.widget.show: humidity_widget
+            - lvgl.label.update:
+                id: humidity
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
     update_interval: 10s
 
   - platform: template
@@ -74,23 +96,31 @@ text_sensor:
       float cos[3] = {id(co2_scd40).state,
                       id(eco2_ens160).state,
                       id(eco2_sgp30).state};
-      float co = 0;
+      float co = NAN;
       for (int i = 0; i < 3; i++) {
         if (!isnan(cos[i])) { co = cos[i]; break; }
       }
       id(best_co2).publish_state(co);
       char str[20] = {'0'};
+      if (isnan(co)) { return((std::string) str); }
       if (co > $co2_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", co); }
       else if (co > $co2_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", co); }
       else if (co > $co2_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", co); }
       else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", co); }
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: co2
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_co2).state);
+          then:
+            - lvgl.widget.hide: co2_widget
+          else:
+            - lvgl.widget.show: co2_widget
+            - lvgl.label.update:
+                id: co2
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
     update_interval: 10s
 
   - platform: template
@@ -98,18 +128,26 @@ text_sensor:
     name: "Pressure"
     internal: true
     lambda: |-
-      float pres = 0;
+      float pres = NAN;
       char str[20] = {'0'};
       if (!isnan(id(pres_bmp280).state)) { pres = id(pres_bmp280).state; }
       id(best_pressure).publish_state(pres);
+      if (isnan(pres)) { return((std::string) str); }
       snprintf(str, sizeof str, "%.0f", pres);
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: pressure
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_pressure).state);
+          then:
+            - lvgl.widget.hide: pressure_widget
+          else:
+            - lvgl.widget.show: pressure_widget
+            - lvgl.label.update:
+                id: pressure
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
 
   - platform: template
     id: "voc_disp"
@@ -119,23 +157,33 @@ text_sensor:
       float vocs[3] = {id(tvoc_sen5x).state,
                        id(tvoc_ens160).state,
                        id(tvoc_sgp30).state};
-      float voc = 0;
+      float voc = NAN;
       for (int i = 0; i < 3; i++) {
         if (!isnan(vocs[i])) { voc = vocs[i]; break; }
       }
       id(best_voc).publish_state(voc);
       char str[20] = {'0'};
+      if (isnan(voc)) { return ((std::string) str); }
       if (voc > $voc_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", voc); }
       else if (voc > $voc_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", voc); }
       else if (voc > $voc_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", voc); }
       else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", voc); }
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: vocs
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_voc).state);
+          then:
+            - lvgl.widget.hide: voc_lbl_widget
+            - lvgl.widget.hide: voc_widget
+          else:
+            - lvgl.widget.show: voc_lbl_widget
+            - lvgl.widget.show: voc_widget
+            - lvgl.label.update:
+                id: vocs
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
     update_interval: 10s
 
   - platform: template
@@ -143,21 +191,31 @@ text_sensor:
     name: "CH2O display"
     internal: true
     lambda: |-
-      float ch2o = 0;
+      float ch2o = NAN;
       if (!isnan(id(ch2o_ze08).state)) { ch2o = id(ch2o_ze08).state; }
       id(best_ch2o).publish_state(ch2o);
       char str[20] = {'0'};
+      if(isnan(ch2o)) { return ((std::string) str); }
       if (ch2o > $ch2o_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", ch2o); }
       else if (ch2o > $ch2o_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", ch2o); }
       else if (ch2o > $ch2o_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", ch2o); }
       else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", ch2o); }
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: ch2o
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_ch2o).state);
+          then:
+            - lvgl.widget.hide: ch2o_lbl_widget
+            - lvgl.widget.hide: ch2o_widget
+          else:
+            - lvgl.widget.show: ch2o_lbl_widget
+            - lvgl.widget.show: ch2o_widget
+            - lvgl.label.update:
+                id: ch2o
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
     update_interval: 10s
   
   - platform: template
@@ -167,23 +225,33 @@ text_sensor:
     lambda: |-
       float pm1s[2] = {id(pm1_sen5x).state,
                        id(pm1_pms).state};
-      float pm1 = 0;
+      float pm1 = NAN;
       for (int i = 0; i < 2; i++) {
         if (!isnan(pm1s[i])) { pm1 = pm1s[i]; break; }
       }
       id(best_pm1).publish_state(pm1);
       char str[20] = {'0'};
+      if(isnan(pm1)) { return ((std::string) str); }
       if (pm1 > $pm1_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", pm1); }
       else if (pm1 > $pm1_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", pm1); }
       else if (pm1 > $pm1_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", pm1); }
       else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", pm1); }
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: pm_1_0
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_pm1).state);
+          then:
+            - lvgl.widget.hide: pm1_lbl_widget
+            - lvgl.widget.hide: pm1_widget
+          else:
+            - lvgl.widget.show: pm1_lbl_widget
+            - lvgl.widget.show: pm1_widget
+            - lvgl.label.update:
+                id: pm_1_0
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
     update_interval: 10s
       
   - platform: template
@@ -193,23 +261,33 @@ text_sensor:
     lambda: |-
       float pm25s[2] = {id(pm25_sen5x).state,
                         id(pm25_pms).state};
-      float pm25 = 0;
+      float pm25 = NAN;
       for (int i = 0; i < 2; i++) {
         if (!isnan(pm25s[i])) { pm25 = pm25s[i]; break; }
       }
       id(best_pm25).publish_state(pm25);
       char str[20] = {'0'};
+      if(isnan(pm25)) { return ((std::string) str); }
       if (pm25 > $pm25_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", pm25); }
       else if (pm25 > $pm25_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", pm25); }
       else if (pm25 > $pm25_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", pm25); }
       else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", pm25); }
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: pm_2_5
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_pm25).state);
+          then:
+            - lvgl.widget.hide: pm25_lbl_widget
+            - lvgl.widget.hide: pm25_widget
+          else:
+            - lvgl.widget.show: pm25_lbl_widget
+            - lvgl.widget.show: pm25_widget
+            - lvgl.label.update:
+                id: pm_2_5
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
     update_interval: 10s
       
   - platform: template
@@ -218,23 +296,33 @@ text_sensor:
     internal: true
     lambda: |-
       float pm40s[1] = {id(pm40_sen5x).state};
-      float pm40 = 0;
+      float pm40 = NAN;
       for (int i = 0; i < 1; i++) {
         if (!isnan(pm40s[i])) { pm40 = pm40s[i]; break; }
       }
       id(best_pm40).publish_state(pm40);
       char str[20] = {'0'};
+      if (isnan(pm40)) { return ((std::string) str); }
       if (pm40 > $pm40_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", pm40); }
       else if (pm40 > $pm40_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", pm40); }
       else if (pm40 > $pm40_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", pm40); }
       else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", pm40); }
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: pm_4_0
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_pm40).state);
+          then:
+            - lvgl.widget.hide: pm40_lbl_widget
+            - lvgl.widget.hide: pm40_widget
+          else:
+            - lvgl.widget.show: pm40_lbl_widget
+            - lvgl.widget.show: pm40_widget
+            - lvgl.label.update:
+                id: pm_4_0
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
     update_interval: 10s
       
   - platform: template
@@ -244,21 +332,31 @@ text_sensor:
     lambda: |-
       float pm10s[2] = {id(pm10_sen5x).state,
                         id(pm10_pms).state};
-      float pm10 = 0;
+      float pm10 = NAN;
       for (int i = 0; i < 2; i++) {
         if (!isnan(pm10s[i])) { pm10 = pm10s[i]; break; }
       }
       id(best_pm10).publish_state(pm10);
       char str[20] = {'0'};
+      if(isnan(pm10)) { return ((std::string) str); }
       if (pm10 > $pm10_high) { snprintf(str, sizeof str, "#%s %.0f#", "$high_hex", pm10); }
       else if (pm10 > $pm10_medium) { snprintf(str, sizeof str, "#%s %.0f#", "$medium_hex", pm10); }
       else if (pm10 > $pm10_low) { snprintf(str, sizeof str, "#%s %.0f#", "$low_hex", pm10); }
       else { snprintf(str, sizeof str, "#%s %.0f#", "$safe_hex", pm10); }
       return ((std::string) str);
     on_value:
-      - lvgl.label.update:
-          id: pm_10_0
-          text:
-            format: "%s"
-            args: [ 'x.c_str()' ]
+      - if:
+          condition:
+            lambda: return isnan(id(best_pm10).state);
+          then:
+            - lvgl.widget.hide: pm10_lbl_widget
+            - lvgl.widget.hide: pm10_widget
+          else:
+            - lvgl.widget.show: pm10_lbl_widget
+            - lvgl.widget.show: pm10_widget
+            - lvgl.label.update:
+                id: pm_10_0
+                text:
+                  format: "%s"
+                  args: [ 'x.c_str()' ]
     update_interval: 10s
