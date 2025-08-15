@@ -14,9 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Removed
 ### Fixed
+- Don't display fields for sensors that aren't present
 ### Security
 
-## [0.3.2] - 2025-08-14
+## [0.4.0] - 2025-08-14
+### Added
+- Temperature now also exposed to HA in Freedom Units.
 ### Changed
 - Tweaks for better integration with Home Assistant dashboards.
   - Expose backlight as a control instead of a light.

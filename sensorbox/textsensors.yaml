@@ -20,6 +20,7 @@ text_sensor:
         if (!isnan(temps[i])) { temp = temps[i] + id(temp_offset); break; }
       }
       id(best_temp).publish_state(temp);
+      id(temp_f).publish_state((temp * 9.0 / 5.0) + 32.0);
       char str[20] = {'0'};
       if (temp < $temp_cold) { snprintf(str, sizeof str, "#%s %.1f#", "$cold_hex", temp); }
       else if (temp > $temp_hot) { snprintf(str, sizeof str, "#%s %.1f#", "$hot_hex", temp); }

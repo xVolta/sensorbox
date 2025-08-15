@@ -265,6 +265,16 @@ sensor:
     update_interval: never
     device_class: temperature
     icon: mdi:thermometer
+    unit_of_measurement: "${deg_c_str}"
+
+  - platform: template
+    name: "Temperature ${deg_f_str}"
+    id: temp_f
+    update_interval: never
+    device_class: temperature
+    icon: mdi:thermometer
+    unit_of_measurement: "${deg_f_str}"
+    disabled_by_default: True
 
   - platform: template
     name: "Humidity"
@@ -272,6 +282,7 @@ sensor:
     update_interval: never
     device_class: humidity
     icon: mdi:water-percent
+    unit_of_measurement: "%"
 
   - platform: template
     name: "CO2"
@@ -279,6 +290,7 @@ sensor:
     update_interval: never
     device_class: carbon_dioxide
     icon: mdi:molecule-co2
+    unit_of_measurement: "ppm"
 
   - platform: template
     name: "Pressure"
@@ -286,6 +298,7 @@ sensor:
     update_interval: never
     device_class: pressure
     icon: mdi:gauge
+    unit_of_measurement: "hPa"
 
   - platform: template
     name: "VOCs"
@@ -293,6 +306,7 @@ sensor:
     update_interval: never
     device_class: volatile_organic_compounds_parts
     icon: mdi:radiator
+    unit_of_measurement: "ppb"
 
   - platform: template
     name: "CH2O"
@@ -300,6 +314,7 @@ sensor:
     update_interval: never
     device_class: volatile_organic_compounds_parts
     icon: mdi:molecule
+    unit_of_measurement: "ppb"
 
   - platform: template
     name: "PM 1.0"
@@ -307,6 +322,7 @@ sensor:
     update_interval: never
     device_class: pm1
     icon: mdi:chemical-weapon
+    unit_of_measurement: "${ug_m3_str}"
 
   - platform: template
     name: "PM 2.5"
@@ -314,6 +330,7 @@ sensor:
     update_interval: never
     device_class: pm25
     icon: mdi:chemical-weapon
+    unit_of_measurement: "${ug_m3_str}"
 
   - platform: template
     name: "PM 4.0"
@@ -321,6 +338,7 @@ sensor:
     update_interval: never
     device_class: pm10
     icon: mdi:chemical-weapon
+    unit_of_measurement: "${ug_m3_str}"
 
   - platform: template
     name: "PM 10"
@@ -328,4 +346,4 @@ sensor:
     update_interval: never
     device_class: pm10
     icon: mdi:chemical-weapon
-
+    unit_of_measurement: "${ug_m3_str}"
