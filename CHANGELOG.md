@@ -13,7 +13,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Deprecated
 ### Removed
+### Fixed
 ### Security
+
+## [0.5.0] - 2025-08-16
+### NOTICE
+- Any existing device configuration files will need to be edited when upgrading to this version!
+  - sensorbox/globals.yaml has been removed, and will need to be removed from your per device config.
+  - sensorbox/controls.yaml has been added, and will need to be added as an include in your per device config.
+### Added
+- Control to select on-device temperature display units.
+### Changed
+- Sensor code refactored to use lvgl calls to set display colors
+- Display code refactored for better maintainability
+- Proper handling of sensor display for devices without all sensor types.
+- Top button now increases display brightness 20% per push, up to 100%, then resets to 0% (off).
+### Removed
+- Global variables
+- Hacky display workarounds using text sensors.
+### Fixed
+- No longer displays placeholder sensor fields and categories before sensor data is available.
 
 ## [0.4.1] - 2025-08-15
 ### Fixed

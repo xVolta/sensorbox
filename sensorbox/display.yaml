@@ -1,7 +1,5 @@
 <<: !include clock.yaml
 <<: !include fonts.yaml
-<<: !include top-button.yaml
-<<: !include textsensors.yaml
 
 lvgl:
   theme: !include theme.yaml
@@ -40,356 +38,367 @@ lvgl:
             x: 0
             y: 30
             align: TOP_LEFT
-            width: 100%
-            height: 46
+            width: 240
+            height: 290
             pad_all: 0
             bg_opa: COVER
             bg_color: black
             border_opa: TRANSP
+            scrollbar_mode: "OFF"
             layout:
               type: FLEX
-              flex_flow: ROW
-              flex_align_main: CENTER
-              flex_align_cross: END
+              flex_flow: COLUMN
               pad_row: 0
               pad_column: 0
             widgets:
-              - button:
-                  id: temp_widget
-                  width: 118
-                  height: 46
+              - obj:
+                  width: 236
+                  height: SIZE_CONTENT
+                  align: CENTER
+                  styles: style_obj
+                  scrollbar_mode: "OFF"
+                  layout:
+                    type: FLEX
+                    flex_flow: ROW
+                    flex_align_main: SPACE_EVENLY
+                    pad_row: 0
+                    pad_column: 0
                   widgets:
-                    - label:
-                        id: temperature
-                        text: "0.00"
-                        align: LEFT_MID
-                        styles: style_value_lg
-                        recolor: true
-                    - label:
-                        text: ${deg_c_str}
-                        align_to:
-                          id: temperature
-                          align: OUT_RIGHT_MID
-                        text_align: RIGHT
-                        styles: style_units_lg
-              - button:
-                  id: humidity_widget
-                  width: 118
-                  height: 46
+                    - button:
+                        id: temp_widget
+                        hidden: True
+                        styles: style_obj
+                        widgets:
+                          - label:
+                              id: temperature
+                              text: "0.00"
+                              align: LEFT_MID
+                              styles: style_value_lg
+                              recolor: true
+                          - label:
+                              text: ${deg_c_str}
+                              align_to:
+                                id: temperature
+                                align: OUT_RIGHT_MID
+                              text_align: RIGHT
+                              styles: style_units_lg
+                    - button:
+                        id: temp_f_widget
+                        hidden: True
+                        styles: style_obj
+                        widgets:
+                          - label:
+                              id: temperature_f
+                              text: "0.00"
+                              align: LEFT_MID
+                              styles: style_value_lg
+                              recolor: true
+                          - label:
+                              text: ${deg_f_str}
+                              align_to:
+                                id: temperature_f
+                                align: OUT_RIGHT_MID
+                              text_align: RIGHT
+                              styles: style_units_lg
+                    - button:
+                        id: humidity_widget
+                        hidden: True
+                        styles: style_obj
+                        widgets:
+                          - label:
+                              id: humidity
+                              text: "0.00"
+                              align: LEFT_MID
+                              styles: style_value_lg
+                              recolor: true
+                          - label:
+                              text: "RH\n%"
+                              align_to:
+                                id: humidity
+                                align: OUT_RIGHT_TOP
+                              text_align: RIGHT
+                              styles: style_units
+              - obj:
+                  width: 236
+                  height: SIZE_CONTENT
+                  align: CENTER
+                  styles: style_obj
+                  scrollbar_mode: "OFF"
+                  layout:
+                    type: FLEX
+                    flex_flow: ROW
+                    flex_align_main: SPACE_EVENLY
+                    pad_row: 0
+                    pad_column: 0
                   widgets:
-                    - label:
-                        id: humidity
-                        text: "0.00"
-                        align: LEFT_MID
-                        styles: style_value_lg
-                        recolor: true
-                    - label:
-                        text: "RH\n%"
-                        align_to:
-                          id: humidity
-                          align: OUT_RIGHT_TOP
-                        text_align: RIGHT
-                        styles: style_units
-        - obj:
-            x: 0
-            y: 76
-            align: TOP_LEFT
-            width: 100%
-            height: 42
-            pad_all: 0
-            bg_opa: COVER
-            bg_color: black
-            border_opa: TRANSP
-            layout:
-              type: FLEX
-              flex_flow: ROW
-              flex_align_main: CENTER
-              flex_align_cross: END
-              pad_row: 0
-              pad_column: 0
-            widgets:
-              - button:
-                  id: co2_widget
-                  width: 118
-                  height: 42
-                  widgets:
-                    - label:
-                        id: co2
-                        text: "0000"
-                        text_align: LEFT
-                        styles: style_value
-                        long_mode: CLIP
-                        recolor: true
-                    - label:
-                        text: "${co2_str}\nppm"
-                        align_to:
-                          id: co2
-                          align: OUT_RIGHT_TOP
-                        text_align: RIGHT
-                        styles: style_units
-              - button:
-                  id: pressure_widget
-                  width: 118
-                  height: 42
-                  widgets:
-                    - label:
-                        id: pressure
-                        text: "0000"
-                        text_align: LEFT
-                        styles: style_value
-                        long_mode: CLIP
-                        recolor: true
-                    - label:
-                        text: "hPa"
-                        align_to:
-                          id: pressure
-                          align: OUT_RIGHT_MID
-                        text_align: RIGHT
-                        styles: style_units
-        - obj:
-            x: 0
-            y: 118
-            align: TOP_LEFT
-            width: 100%
-            height: 30
-            pad_all: 0
-            bg_opa: COVER
-            bg_color: black
-            border_opa: TRANSP
-            layout:
-              type: FLEX
-              flex_flow: ROW
-              flex_align_main: CENTER
-              flex_align_cross: END
-              pad_row: 0
-              pad_column: 0
-            widgets:
-              - label:
-                  id: pms_header_widget
+                    - button:
+                        id: co2_widget
+                        styles: style_obj
+                        hidden: True
+                        widgets:
+                          - label:
+                              id: co2
+                              text: "0000"
+                              text_align: LEFT
+                              styles: style_value
+                              long_mode: CLIP
+                              recolor: true
+                          - label:
+                              text: "${co2_str}\nppm"
+                              align_to:
+                                id: co2
+                                align: OUT_RIGHT_TOP
+                              text_align: RIGHT
+                              styles: style_units
+                    - button:
+                        id: pressure_widget
+                        styles: style_obj
+                        hidden: True
+                        widgets:
+                          - label:
+                              id: pressure
+                              text: "0000"
+                              text_align: LEFT
+                              styles: style_value
+                              long_mode: CLIP
+                              recolor: true
+                          - label:
+                              text: "hPa"
+                              align_to:
+                                id: pressure
+                                align: OUT_RIGHT_MID
+                              text_align: RIGHT
+                              styles: style_units
+              - obj:
                   width: 238
-                  height: 30
-                  text: "Particulates (${ug_m3_str})"
-                  text_align: CENTER
-                  styles: style_heading
-        - obj:
-            x: 0
-            y: 148
-            align: TOP_LEFT
-            width: 100%
-            height: 22
-            pad_all: 0
-            bg_opa: COVER
-            bg_color: black
-            border_opa: TRANSP
-            layout:
-              type: FLEX
-              flex_flow: ROW
-              flex_align_main: CENTER
-              flex_align_cross: END
-              pad_row: 0
-              pad_column: 0
-            widgets:
-              - button:
-                  id: pm1_lbl_widget
-                  width: 58
-                  height: 22
+                  height: SIZE_CONTENT
+                  align: CENTER
+                  styles: style_obj
+                  scrollbar_mode: "OFF"
+                  layout:
+                    type: FLEX
+                    flex_flow: ROW
+                    flex_align_main: SPACE_EVENLY
+                    pad_row: 0
+                    pad_column: 0
                   widgets:
                     - label:
-                        text: "PM1"
-                        align: CENTER
-                        styles: style_label
-              - button:
-                  id: pm25_lbl_widget
-                  width: 58
-                  height: 22
+                        id: pms_header_widget
+                        text: "Particulates (${ug_m3_str})"
+                        text_align: CENTER
+                        styles: style_heading
+                        hidden: True
+              - obj:
+                  width: 236
+                  height: SIZE_CONTENT
+                  align: CENTER
+                  styles: style_obj
+                  scrollbar_mode: "OFF"
+                  layout:
+                    type: FLEX
+                    flex_flow: ROW
+                    flex_align_main: SPACE_EVENLY
+                    flex_align_cross: END
+                    pad_row: 0
+                    pad_column: 0
                   widgets:
-                    - label:
-                        text: "PM2.5"
-                        align: CENTER
-                        styles: style_label
-              - button:
-                  id: pm40_lbl_widget
-                  width: 58
-                  height: 22
-                  widgets:
-                    - label:
-                        text: "PM4.0"
-                        align: CENTER
-                        styles: style_label
-              - button:
-                  id: pm10_lbl_widget
-                  width: 58
-                  height: 22
-                  widgets:
-                    - label:
-                        text: "PM10"
-                        align: CENTER
-                        styles: style_label
-        - obj:
-            x: 0
-            y: 170
-            align: TOP_LEFT
-            width: 100%
-            height: 40
-            pad_all: 0
-            bg_opa: COVER
-            bg_color: black
-            border_opa: TRANSP
-            layout:
-              type: FLEX
-              flex_flow: ROW
-              flex_align_main: CENTER
-              flex_align_cross: END
-              pad_row: 0
-              pad_column: 0
-            widgets:
-              - button:
-                  id: pm1_widget
-                  width: 58
-                  height: 40
-                  widgets:
-                    - label:
-                        id: pm_1_0
-                        text: "00.0"
-                        align: CENTER
-                        styles: style_value
-                        long_mode: CLIP
-                        recolor: true
-              - button:
-                  id: pm25_widget
-                  width: 58
-                  height: 40
-                  widgets:
-                    - label:
-                        id: pm_2_5
-                        text: "00.0"
-                        align: CENTER
-                        styles: style_value
-                        long_mode: CLIP
-                        recolor: true
-              - button:
-                  id: pm40_widget
-                  width: 58
-                  height: 40
-                  widgets:
-                    - label:
-                        id: pm_4_0
-                        text: "00.0"
-                        align: CENTER
-                        styles: style_value
-                        long_mode: CLIP
-                        recolor: true
-              - button:
-                  id: pm10_widget
-                  width: 58
-                  height: 40
-                  widgets:
-                    - label:
-                        id: pm_10_0
-                        text: "00.0"
-                        align: CENTER
-                        styles: style_value
-                        long_mode: CLIP
-                        recolor: true
-        - obj:
-            x: 0
-            y: 210
-            align: TOP_LEFT
-            width: 100%
-            height: 30
-            pad_all: 0
-            bg_opa: COVER
-            bg_color: black
-            border_opa: TRANSP
-            layout:
-              type: FLEX
-              flex_flow: ROW
-              flex_align_main: CENTER
-              flex_align_cross: END
-              pad_row: 0
-              pad_column: 0
-            widgets:
-              - label:
-                  id: voc_header_widget
+                    - button:
+                        id: pm1_widget
+                        styles: style_obj
+                        scrollbar_mode: "OFF"
+                        hidden: True
+                        layout:
+                          type: FLEX
+                          flex_flow: COLUMN
+                          pad_row: 0
+                          pad_column: 0
+                        widgets:
+                          - label:
+                              width: 58
+                              text: "PM1"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_label
+                              scrollbar_mode: "OFF"
+                          - label:
+                              width: 58
+                              id: pm_1_0
+                              text: "00.0"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_value
+                              long_mode: CLIP
+                              recolor: true
+                              scrollbar_mode: "OFF"
+                    - button:
+                        id: pm25_widget
+                        styles: style_obj
+                        scrollbar_mode: "OFF"
+                        hidden: True
+                        layout:
+                          type: FLEX
+                          flex_flow: COLUMN
+                          pad_row: 0
+                          pad_column: 0
+                        widgets:
+                          - label:
+                              width: 58
+                              text: "PM2.5"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_label
+                              scrollbar_mode: "OFF"
+                          - label:
+                              width: 58
+                              id: pm_2_5
+                              text: "00.0"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_value
+                              long_mode: CLIP
+                              recolor: true
+                              scrollbar_mode: "OFF"
+                    - button:
+                        id: pm40_widget
+                        styles: style_obj
+                        scrollbar_mode: "OFF"
+                        hidden: True
+                        layout:
+                          type: FLEX
+                          flex_flow: COLUMN
+                          pad_row: 0
+                          pad_column: 0
+                        widgets:
+                          - label:
+                              width: 58
+                              text: "PM4.0"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_label
+                              scrollbar_mode: "OFF"
+                          - label:
+                              width: 58
+                              id: pm_4_0
+                              text: "00.0"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_value
+                              long_mode: CLIP
+                              recolor: true
+                              scrollbar_mode: "OFF"
+                    - button:
+                        id: pm10_widget
+                        styles: style_obj
+                        scrollbar_mode: "OFF"
+                        hidden: True
+                        layout:
+                          type: FLEX
+                          flex_flow: COLUMN
+                          pad_row: 0
+                          pad_column: 0
+                        widgets:
+                          - label:
+                              width: 58
+                              text: "PM10"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_label
+                              scrollbar_mode: "OFF"
+                          - label:
+                              width: 58
+                              id: pm_10_0
+                              text: "00.0"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_value
+                              long_mode: CLIP
+                              recolor: true
+                              scrollbar_mode: "OFF"
+              - obj:
                   width: 238
-                  height: 30
-                  text: "VOCs (ppb)"
-                  text_align: CENTER
-                  styles: style_heading
-        - obj:
-            x: 0
-            y: 240
-            align: TOP_LEFT
-            width: 100%
-            height: 24
-            pad_all: 0
-            bg_opa: COVER
-            bg_color: black
-            border_opa: TRANSP
-            layout:
-              type: FLEX
-              flex_flow: ROW
-              flex_align_main: CENTER
-              flex_align_cross: END
-              pad_row: 0
-              pad_column: 0
-            widgets:
-              - button:
-                  id: voc_lbl_widget
-                  width: 118
-                  height: 24
+                  height: SIZE_CONTENT
+                  align: CENTER
+                  styles: style_obj
+                  scrollbar_mode: "OFF"
+                  layout:
+                    type: FLEX
+                    flex_flow: ROW
+                    flex_align_main: SPACE_EVENLY
+                    flex_align_cross: END
+                    pad_row: 0
+                    pad_column: 0
                   widgets:
                     - label:
-                        text: "Total"
-                        align: CENTER
-                        styles: style_label
-              - button:
-                  id: ch2o_lbl_widget
-                  width: 118
-                  height: 24
+                        id: voc_header_widget
+                        text: "VOCs (ppb)"
+                        text_align: CENTER
+                        styles: style_heading
+                        hidden: True
+              - obj:
+                  width: 236
+                  height: SIZE_CONTENT
+                  align: CENTER
+                  styles: style_obj
+                  scrollbar_mode: "OFF"
+                  layout:
+                    type: FLEX
+                    flex_flow: ROW
+                    flex_align_main: SPACE_EVENLY
+                    flex_align_cross: END
+                    pad_row: 0
+                    pad_column: 0
                   widgets:
-                    - label:
-                        text: ${ch2o_str}
-                        align: CENTER
-                        styles: style_label
-        - obj:
-            x: 0
-            y: 264
-            align: TOP_LEFT
-            width: 100%
-            height: 44
-            pad_all: 0
-            bg_opa: COVER
-            bg_color: black
-            border_opa: TRANSP
-            layout:
-              type: FLEX
-              flex_flow: ROW
-              flex_align_main: CENTER
-              flex_align_cross: END
-              pad_row: 0
-              pad_column: 0
-            widgets:
-              - button:
-                  id: voc_widget
-                  width: 118
-                  height: 44
-                  widgets:
-                    - label:
-                        id: vocs
-                        text: "000"
-                        align: CENTER
-                        styles: style_value_lg
-                        recolor: true
-              - button:
-                  id: ch2o_widget
-                  width: 118
-                  height: 44
-                  widgets:
-                    - label:
-                        id: ch2o
-                        text: "000"
-                        align: CENTER
-                        styles: style_value_lg
-                        recolor: true
-
+                    - button:
+                        id: voc_widget
+                        scrollbar_mode: "OFF"
+                        styles: style_obj
+                        hidden: True
+                        layout:
+                          type: FLEX
+                          flex_flow: COLUMN
+                          pad_row: 0
+                          pad_column: 0
+                        widgets:
+                          - label:
+                              width: 118
+                              text: "Total"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_label
+                              scrollbar_mode: "OFF"
+                          - label:
+                              width: 118
+                              id: vocs
+                              text: "000"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_value_lg
+                              recolor: true
+                              scrollbar_mode: "OFF"
+                    - button:
+                        id: ch2o_widget
+                        scrollbar_mode: "OFF"
+                        styles: style_obj
+                        hidden: True
+                        layout:
+                          type: FLEX
+                          flex_flow: COLUMN
+                          pad_row: 0
+                          pad_column: 0
+                        widgets:
+                          - label:
+                              width: 118
+                              text: ${ch2o_str}
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_label
+                              scrollbar_mode: "OFF"
+                          - label:
+                              width: 118
+                              id: ch2o
+                              text: "00"
+                              align: CENTER
+                              text_align: CENTER
+                              styles: style_value_lg
+                              recolor: true
+                              scrollbar_mode: "OFF"

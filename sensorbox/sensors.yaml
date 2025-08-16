@@ -262,10 +262,43 @@ sensor:
   - platform: template
     name: "Temperature"
     id: best_temp
-    update_interval: never
+    update_interval: 10s
     device_class: temperature
     icon: mdi:thermometer
     unit_of_measurement: "${deg_c_str}"
+    lambda: |-
+      float temps[6] = {id(temp_sen5x).state,
+                        id(temp_sht40).state,
+                        id(temp_aht20).state,
+                        id(temp_scd40).state,
+                        id(temp_aht20_ens).state,
+                        id(temp_bmp280).state};
+      float temp = NAN;
+      for (int i = 0; i < 6; i++) {
+        if (!isnan(temps[i])) {
+          temp = temps[i] + id(temp_offset).state;
+          break;
+        }
+      }
+      id(temp_f).publish_state((temp * 9.0 / 5.0) + 32.0);
+      return temp;
+    on_value:
+      - if:
+          any:
+            lambda: return (isnan(x) || (id(temp_unit_control).state == "${deg_f_str}"));
+          then:
+            - lvgl.widget.hide: temp_widget
+          else:
+            - lvgl.widget.show: temp_widget
+            - lvgl.label.update:
+                id: temperature
+                text:
+                    format: "%.1f"
+                    args: [ x ]
+                text_color: !lambda |-
+                  if (x < $temp_cold) { return lv_color_hex($cold_hex); }
+                  else if (x > $temp_hot) { return lv_color_hex($hot_hex); }
+                  else { return lv_color_hex($comfort_hex); }
 
   - platform: template
     name: "Temperature ${deg_f_str}"
@@ -275,75 +308,321 @@ sensor:
     icon: mdi:thermometer
     unit_of_measurement: "${deg_f_str}"
     disabled_by_default: True
+    on_value:
+      - if:
+          condition:
+            lambda: return (isnan(x) || (id(temp_unit_control).state == "${deg_c_str}"));
+          then:
+            - lvgl.widget.hide: temp_f_widget
+          else:
+            - lvgl.widget.show: temp_f_widget
+            - lvgl.label.update:
+                id: temperature_f
+                text:
+                    format: "%.1f"
+                    args: [ x ]
+                text_color: !lambda |-
+                  float tempc = (x - 32.0) * 5.0 / 9.0;
+                  if (tempc < $temp_cold) { return lv_color_hex($cold_hex); }
+                  else if (tempc > $temp_hot) { return lv_color_hex($hot_hex); }
+                  else { return lv_color_hex($comfort_hex); }
 
   - platform: template
     name: "Humidity"
     id: best_humidity
-    update_interval: never
+    update_interval: 10s
     device_class: humidity
     icon: mdi:water-percent
     unit_of_measurement: "%"
+    lambda: |-
+      float hums[5] = {id(hum_sen5x).state,
+                       id(hum_sht40).state,
+                       id(hum_aht20).state,
+                       id(hum_scd40).state,
+                       id(hum_aht20_ens).state};
+      float hum = NAN;
+      for (int i = 0; i < 5; i++) {
+        if (!isnan(hums[i])) { hum = hums[i] + id(hum_offset).state; break; }
+      }
+      return hum;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: humidity_widget
+          else:
+            - lvgl.widget.show: humidity_widget
+            - lvgl.label.update:
+                id: humidity
+                text:
+                  format: "%.1f"
+                  args: [ x ]
+                text_color: !lambda |-
+                  if (x > $humid_high) { return lv_color_hex($high_hex); }
+                  else if (x < $dry_high) { return lv_color_hex($high_hex); }
+                  else if (x > $humid_medium) { return lv_color_hex($medium_hex); }
+                  else if (x < $dry_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $humid_low) { return lv_color_hex($low_hex); }
+                  else if (x > $dry_low) { return lv_color_hex($low_hex); }
+                  else { return lv_color_hex($safe_hex); }
 
   - platform: template
     name: "CO2"
     id: best_co2
-    update_interval: never
+    update_interval: 10s
     device_class: carbon_dioxide
     icon: mdi:molecule-co2
     unit_of_measurement: "ppm"
+    lambda: |-
+      float cos[3] = {id(co2_scd40).state,
+                      id(eco2_ens160).state,
+                      id(eco2_sgp30).state};
+      float co = NAN;
+      for (int i = 0; i < 3; i++) {
+        if (!isnan(cos[i])) { co = cos[i]; break; }
+      }
+      return co;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: co2_widget
+          else:
+            - lvgl.widget.show: co2_widget
+            - lvgl.label.update:
+                id: co2
+                text:
+                  format: "%.0f"
+                  args: [ x ]
+                text_color: !lambda |-
+                  if (x > $co2_high) { return lv_color_hex($high_hex); }
+                  else if (x > $co2_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $co2_low) { return lv_color_hex($low_hex); }
+                  else { return lv_color_hex($safe_hex); }
 
   - platform: template
     name: "Pressure"
     id: best_pressure
-    update_interval: never
+    update_interval: 10s
     device_class: pressure
     icon: mdi:gauge
     unit_of_measurement: "hPa"
+    lambda: |-
+      float pres = NAN;
+      if (!isnan(id(pres_bmp280).state)) { pres = id(pres_bmp280).state; }
+      return pres;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: pressure_widget
+          else:
+            - lvgl.widget.show: pressure_widget
+            - lvgl.label.update:
+                id: pressure
+                text:
+                  format: "%.0f"
+                  args: [ x ]
 
   - platform: template
     name: "VOCs"
     id: best_voc
-    update_interval: never
+    update_interval: 10s
     device_class: volatile_organic_compounds_parts
     icon: mdi:radiator
     unit_of_measurement: "ppb"
+    lambda: |-
+      float vocs[3] = {id(tvoc_sen5x).state,
+                       id(tvoc_ens160).state,
+                       id(tvoc_sgp30).state};
+      float voc = NAN;
+      for (int i = 0; i < 3; i++) {
+        if (!isnan(vocs[i])) { voc = vocs[i]; break; }
+      }
+      return voc;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: voc_widget
+          else:
+            - lvgl.widget.show: [voc_widget, voc_header_widget]
+            - lvgl.label.update:
+                id: vocs
+                text:
+                  format: "%.0f"
+                  args: [ x ]
+                text_color: !lambda |-
+                  if (x > $voc_high) { return lv_color_hex($high_hex); }
+                  else if (x > $voc_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $voc_low) { return lv_color_hex($low_hex); }
+                  else { return lv_color_hex($safe_hex); }
 
   - platform: template
     name: "CH2O"
     id: best_ch2o
-    update_interval: never
+    update_interval: 10s
     device_class: volatile_organic_compounds_parts
     icon: mdi:molecule
     unit_of_measurement: "ppb"
+    lambda: |-
+      float ch2o = NAN;
+      if (!isnan(id(ch2o_ze08).state)) { ch2o = id(ch2o_ze08).state; }
+      return ch2o;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: ch2o_widget
+          else:
+            - lvgl.widget.show: [ch2o_widget, voc_header_widget]
+            - lvgl.label.update:
+                id: ch2o
+                text:
+                  format: "%.0f"
+                  args: [ x ]
+                text_color: !lambda |-
+                  if (x > $ch2o_high) { return lv_color_hex($high_hex); }
+                  else if (x > $ch2o_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $ch2o_low) { return lv_color_hex($low_hex); }
+                  else { return lv_color_hex($safe_hex); }
 
   - platform: template
     name: "PM 1.0"
     id: best_pm1
-    update_interval: never
+    update_interval: 10s
     device_class: pm1
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
+    lambda: |-
+      float pm1s[2] = {id(pm1_sen5x).state,
+                       id(pm1_pms).state};
+      float pm1 = NAN;
+      for (int i = 0; i < 2; i++) {
+        if (!isnan(pm1s[i])) { pm1 = pm1s[i]; break; }
+      }
+      return pm1;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: pm1_widget
+          else:
+            - lvgl.widget.show: [pm1_widget, pms_header_widget]
+            - lvgl.label.update:
+                id: pm_1_0
+                text:
+                  format: "%.0f"
+                  args: [ x ]
+                text_color: !lambda |-
+                  if (x > $pm1_high) { return lv_color_hex($high_hex); }
+                  else if (x > $pm1_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $pm1_low) { return lv_color_hex($low_hex); }
+                  else { return lv_color_hex($safe_hex); }
 
   - platform: template
     name: "PM 2.5"
     id: best_pm25
-    update_interval: never
+    update_interval: 10s
     device_class: pm25
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
+    lambda: |-
+      float pm25s[2] = {id(pm25_sen5x).state,
+                       id(pm25_pms).state};
+      float pm25 = NAN;
+      for (int i = 0; i < 2; i++) {
+        if (!isnan(pm25s[i])) { pm25 = pm25s[i]; break; }
+      }
+      return pm25;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: pm25_widget
+          else:
+            - lvgl.widget.show: [pm25_widget, pms_header_widget]
+            - lvgl.label.update:
+                id: pm_2_5
+                text:
+                  format: "%.0f"
+                  args: [ x ]
+                text_color: !lambda |-
+                  if (x > $pm25_high) { return lv_color_hex($high_hex); }
+                  else if (x > $pm25_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $pm25_low) { return lv_color_hex($low_hex); }
+                  else { return lv_color_hex($safe_hex); }
 
   - platform: template
     name: "PM 4.0"
     id: best_pm40
-    update_interval: never
+    update_interval: 10s
     device_class: pm10
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
+    lambda: |-
+      float pm40s[1] = {id(pm40_sen5x).state};
+      float pm40 = NAN;
+      for (int i = 0; i < 1; i++) {
+        if (!isnan(pm40s[i])) { pm40 = pm40s[i]; break; }
+      }
+      return pm40;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: pm40_widget
+          else:
+            - lvgl.widget.show: [pm40_widget, pms_header_widget]
+            - lvgl.label.update:
+                id: pm_4_0
+                text:
+                  format: "%.0f"
+                  args: [ x ]
+                text_color: !lambda |-
+                  if (x > $pm40_high) { return lv_color_hex($high_hex); }
+                  else if (x > $pm40_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $pm40_low) { return lv_color_hex($low_hex); }
+                  else { return lv_color_hex($safe_hex); }
 
   - platform: template
     name: "PM 10"
     id: best_pm10
-    update_interval: never
+    update_interval: 10s
     device_class: pm10
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
+    lambda: |-
+      float pm10s[2] = {id(pm10_sen5x).state,
+                       id(pm10_pms).state};
+      float pm10 = NAN;
+      for (int i = 0; i < 2; i++) {
+        if (!isnan(pm10s[i])) { pm10 = pm10s[i]; break; }
+      }
+      return pm10;
+    on_value:
+      - if:
+          condition:
+            lambda: return isnan(x);
+          then:
+            - lvgl.widget.hide: pm10_widget
+          else:
+            - lvgl.widget.show: [pm10_widget, pms_header_widget]
+            - lvgl.label.update:
+                id: pm_10_0
+                text:
+                  format: "%.0f"
+                  args: [ x ]
+                text_color: !lambda |-
+                  if (x > $pm10_high) { return lv_color_hex($high_hex); }
+                  else if (x > $pm10_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $pm10_low) { return lv_color_hex($low_hex); }
+                  else { return lv_color_hex($safe_hex); }
