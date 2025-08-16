@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 
+## [0.5.1] - 2025-08-16
+### Fixed
+- Adjusted PM sensor configuration to allow long-term data tracking.
+
 ## [0.5.0] - 2025-08-16
 ### NOTICE
 - Any existing device configuration files will need to be edited when upgrading to this version!

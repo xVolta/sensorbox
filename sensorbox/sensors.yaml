@@ -497,6 +497,7 @@ sensor:
     id: best_pm1
     update_interval: 10s
     device_class: pm1
+    state_class: measurement
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
     lambda: |-
@@ -531,6 +532,7 @@ sensor:
     id: best_pm25
     update_interval: 10s
     device_class: pm25
+    state_class: measurement
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
     lambda: |-
@@ -565,6 +567,7 @@ sensor:
     id: best_pm40
     update_interval: 10s
     device_class: pm10
+    state_class: measurement
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
     lambda: |-
@@ -598,6 +601,7 @@ sensor:
     id: best_pm10
     update_interval: 10s
     device_class: pm10
+    state_class: measurement
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
     lambda: |-
