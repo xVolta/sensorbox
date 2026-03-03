@@ -102,11 +102,11 @@ sensor:
     i2c_id: i2c_2
     variant: AHT20
     temperature:
-      name: "AHT20/ENS160 Temperature"
+      name: "AHT20-ENS160 Temperature"
       id: temp_aht20_ens
       disabled_by_default: True
     humidity:
-      name: "AHT20/ENS160 Humidity"
+      name: "AHT20-ENS160 Humidity"
       id: hum_aht20_ens
       disabled_by_default: True
     update_interval: 10s
@@ -360,11 +360,11 @@ sensor:
                   args: [ x ]
                 text_color: !lambda |-
                   if (x > $humid_high) { return lv_color_hex($high_hex); }
-                  else if (x < $dry_high) { return lv_color_hex($high_hex); }
                   else if (x > $humid_medium) { return lv_color_hex($medium_hex); }
-                  else if (x < $dry_medium) { return lv_color_hex($medium_hex); }
                   else if (x > $humid_low) { return lv_color_hex($low_hex); }
-                  else if (x > $dry_low) { return lv_color_hex($low_hex); }
+                  else if (x < $dry_low) { return lv_color_hex($low_hex); }
+                  else if (x < $dry_medium) { return lv_color_hex($medium_hex); }
+                  else if (x < $dry_high) { return lv_color_hex($high_hex); }
                   else { return lv_color_hex($safe_hex); }
 
   - platform: template
