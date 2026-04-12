@@ -75,11 +75,19 @@ binary_sensor:
       - delayed_off: 500ms
     on_press:
       then:
-        - lambda: |-
-            // Each press increases brightness 20%, up to 100%.  At 100% press sets brightness to 0%.
-            int brightness = id(backlight_brightness).state;
-            if (isnan(brightness)) { brightness = 20; }
-            else if (brightness == 100) { brightness = 0; }
-            else { brightness += 20; }
-            if ( brightness > 100) { brightness = 100; }
-            id(backlight_brightness).make_call().set_value(brightness).perform();
+        - lambda: id(idle_secs) = 0;
+        - if:
+            condition:
+              lambda: return id(ss_active);
+            then:
+              - lambda: id(ss_active) = false;
+              - lvgl.page.show: main_page
+            else:
+              - lambda: |-
+                  // Each press increases brightness 20%, up to 100%.  At 100% press sets brightness to 0%.
+                  int brightness = id(backlight_brightness).state;
+                  if (isnan(brightness)) { brightness = 20; }
+                  else if (brightness == 100) { brightness = 0; }
+                  else { brightness += 20; }
+                  if ( brightness > 100) { brightness = 100; }
+                  id(backlight_brightness).make_call().set_value(brightness).perform();

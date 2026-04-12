@@ -402,3 +402,64 @@ lvgl:
                               styles: style_value_lg
                               recolor: true
                               scrollbar_mode: "OFF"
+    - id: screensaver_page
+      bg_color: black
+      bg_opa: COVER
+      widgets:
+        - label:
+            id: ss_title
+            text: "SPACE INVADERS"
+            align: TOP_MID
+            y: 5
+            text_color: 0x00FF00
+            text_font: font_game
+        - label:
+            id: ss_row0
+            text: "W    W    W    W"
+            x: 65
+            y: 30
+            text_color: 0x00FF00
+            text_font: font_game
+        - label:
+            id: ss_row1
+            text: "M    M    M    M"
+            x: 65
+            y: 55
+            text_color: 0x00FFFF
+            text_font: font_game
+        - label:
+            id: ss_row2
+            text: "X    X    X    X"
+            x: 65
+            y: 80
+            text_color: 0xFFFF00
+            text_font: font_game
+        - label:
+            id: ss_ship
+            text: "A"
+            x: 150
+            y: 200
+            text_color: 0x00FF00
+            text_font: font_game
+        - label:
+            id: ss_bullet
+            text: "!"
+            x: 0
+            y: -20
+            text_color: 0x00FF00
+            text_font: font_game
+            hidden: true
+        - label:
+            id: ss_score_lbl
+            text: "SCORE:0000"
+            x: 5
+            y: 222
+            text_color: 0xFFFFFF
+            text_font: font_game
+        - label:
+            id: ss_end_msg
+            text: "I WIN!"
+            align: CENTER
+            text_color: 0x00FF00
+            text_font: font_game
+            hidden: true

@@ -1,0 +1,269 @@
+globals:
+  - id: ss_active
+    type: bool
+    initial_value: 'false'
+  - id: idle_secs
+    type: int
+    initial_value: '0'
+  - id: ss_gx
+    type: int
+    initial_value: '0'
+  - id: ss_gy
+    type: int
+    initial_value: '0'
+  - id: ss_dir
+    type: int
+    initial_value: '1'
+  - id: ss_alive
+    type: int
+    initial_value: '4095'
+  - id: ss_ship_x
+    type: int
+    initial_value: '150'
+  - id: ss_bullet_x
+    type: int
+    initial_value: '0'
+  - id: ss_bullet_y
+    type: int
+    initial_value: '-1'
+  - id: ss_score
+    type: int
+    initial_value: '0'
+  - id: ss_frame
+    type: int
+    initial_value: '0'
+  - id: ss_ending
+    type: bool
+    initial_value: 'false'
+  - id: ss_end_frames
+    type: int
+    initial_value: '0'
+  - id: ss_won
+    type: bool
+    initial_value: 'false'
+  - id: ss_target_idx
+    type: int
+    initial_value: '-1'
+
+interval:
+  # Idle timer - activate screensaver after 5 min
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (!id(ss_active)) {
+            id(idle_secs) += 1;
+          }
+      - if:
+          condition:
+            lambda: return id(idle_secs) >= 300 && !id(ss_active);
+          then:
+            - lambda: |-
+                id(ss_active) = true;
+                id(idle_secs) = 0;
+                id(ss_gx) = 0;
+                id(ss_gy) = 0;
+                id(ss_dir) = 1;
+                id(ss_alive) = 4095;
+                id(ss_ship_x) = 150;
+                id(ss_bullet_y) = -1;
+                id(ss_score) = 0;
+                id(ss_frame) = 0;
+                id(ss_target_idx) = -1;
+            - lvgl.page.show: screensaver_page
+
+  # Game loop
+  - interval: 50ms
+    then:
+      - if:
+          condition:
+            lambda: return id(ss_active);
+          then:
+            - lambda: |-
+                // Handle end-of-round countdown
+                if (id(ss_ending)) {
+                  id(ss_end_frames) -= 1;
+                  if (id(ss_end_frames) <= 0) {
+                    id(ss_ending) = false;
+                    id(ss_active) = false;
+                    id(idle_secs) = 0;
+                  }
+                  return;
+                }
+
+                id(ss_frame) += 1;
+
+                // Move invaders every frame
+                id(ss_gx) += id(ss_dir) * 5;
+                int alive = id(ss_alive);
+                int min_x = 400, max_x = -1;
+                for (int c = 0; c < 4; c++) {
+                  for (int r = 0; r < 3; r++) {
+                    if (alive & (1 << (r * 4 + c))) {
+                      int ix = 65 + c * 50 + id(ss_gx);
+                      if (ix < min_x) min_x = ix;
+                      if (ix > max_x) max_x = ix;
+                    }
+                  }
+                }
+                if (max_x > 290 || min_x < 10) {
+                  id(ss_dir) = -id(ss_dir);
+                  id(ss_gy) += 10;
+                }
+
+                // Auto-play: pick a random alive invader as target, re-pick when it dies
+                alive = id(ss_alive);
+                int tidx = id(ss_target_idx);
+                if (tidx < 0 || !(alive & (1 << tidx))) {
+                  int count = 0;
+                  for (int i = 0; i < 12; i++) if (alive & (1 << i)) count++;
+                  if (count > 0) {
+                    int pick = (int)(esp_random() % count);
+                    int found = 0;
+                    for (int i = 0; i < 12; i++) {
+                      if (alive & (1 << i)) {
+                        if (found == pick) { id(ss_target_idx) = i; break; }
+                        found++;
+                      }
+                    }
+                  }
+                  tidx = id(ss_target_idx);
+                }
+                int target = id(ss_ship_x);
+                if (tidx >= 0 && (alive & (1 << tidx))) {
+                  target = 65 + (tidx % 4) * 50 + id(ss_gx);
+                }
+                if (id(ss_ship_x) < target - 5) id(ss_ship_x) += 5;
+                else if (id(ss_ship_x) > target + 5) id(ss_ship_x) -= 5;
+
+                // Fire bullet
+                if (id(ss_bullet_y) < 0 && id(ss_frame) % 3 == 0) {
+                  id(ss_bullet_x) = id(ss_ship_x) + 4;
+                  id(ss_bullet_y) = 195;
+                }
+
+                // Move bullet & collision
+                if (id(ss_bullet_y) >= 0) {
+                  id(ss_bullet_y) -= 12;
+                  int by_arr[] = {30, 55, 80};
+                  for (int r = 0; r < 3; r++) {
+                    int iy = by_arr[r] + id(ss_gy);
+                    if (abs(id(ss_bullet_y) - iy) < 12) {
+                      for (int c = 0; c < 4; c++) {
+                        int bit = r * 4 + c;
+                        if (alive & (1 << bit)) {
+                          int ix = 65 + c * 50 + id(ss_gx);
+                          if (abs(id(ss_bullet_x) - ix) < 14) {
+                            id(ss_alive) &= ~(1 << bit);
+                            id(ss_score) += (3 - r) * 10;
+                            id(ss_bullet_y) = -1;
+                            break;
+                          }
+                        }
+                      }
+                      if (id(ss_bullet_y) < 0) break;
+                    }
+                  }
+                  if (id(ss_bullet_y) < 15) id(ss_bullet_y) = -1;
+                }
+
+                // Wave cleared -> win!
+                if (id(ss_alive) == 0) {
+                  id(ss_won) = true;
+                  id(ss_ending) = true;
+                  id(ss_end_frames) = 60;
+                  id(ss_bullet_y) = -1;
+                  id(ss_target_idx) = -1;
+                }
+
+                // Game over: invaders reached ship -> lose
+                if (id(ss_gy) > 100) {
+                  id(ss_won) = false;
+                  id(ss_ending) = true;
+                  id(ss_end_frames) = 60;
+                  id(ss_bullet_y) = -1;
+                  id(ss_target_idx) = -1;
+                }
+
+            # Return to sensors if wave cleared or game over
+            - if:
+                condition:
+                  lambda: return !id(ss_active);
+                then:
+                  - lvgl.page.show: main_page
+
+            # Update invader row 0
+            - lvgl.widget.update:
+                id: ss_row0
+                x: !lambda return 65 + id(ss_gx);
+                y: !lambda return 30 + id(ss_gy);
+            - lvgl.label.update:
+                id: ss_row0
+                text: !lambda |-
+                  std::string t;
+                  for (int c = 0; c < 4; c++) {
+                    t += (id(ss_alive) & (1 << c)) ? "W" : " ";
+                    if (c < 3) t += "    ";
+                  }
+                  return t;
+
+            # Update invader row 1
+            - lvgl.widget.update:
+                id: ss_row1
+                x: !lambda return 65 + id(ss_gx);
+                y: !lambda return 55 + id(ss_gy);
+            - lvgl.label.update:
+                id: ss_row1
+                text: !lambda |-
+                  std::string t;
+                  for (int c = 0; c < 4; c++) {
+                    t += (id(ss_alive) & (1 << (4 + c))) ? "M" : " ";
+                    if (c < 3) t += "    ";
+                  }
+                  return t;
+
+            # Update invader row 2
+            - lvgl.widget.update:
+                id: ss_row2
+                x: !lambda return 65 + id(ss_gx);
+                y: !lambda return 80 + id(ss_gy);
+            - lvgl.label.update:
+                id: ss_row2
+                text: !lambda |-
+                  std::string t;
+                  for (int c = 0; c < 4; c++) {
+                    t += (id(ss_alive) & (1 << (8 + c))) ? "X" : " ";
+                    if (c < 3) t += "    ";
+                  }
+                  return t;
+
+            # Ship
+            - lvgl.widget.update:
+                id: ss_ship
+                x: !lambda return id(ss_ship_x);
+
+            # Bullet
+            - lvgl.widget.update:
+                id: ss_bullet
+                x: !lambda return id(ss_bullet_x);
+                y: !lambda |-
+                  return id(ss_bullet_y) >= 0 ? id(ss_bullet_y) : -20;
+                hidden: !lambda return id(ss_bullet_y) < 0;
+
+            # Score
+            - lvgl.label.update:
+                id: ss_score_lbl
+                text: !lambda |-
+                  char buf[16];
+                  snprintf(buf, sizeof(buf), "SCORE:%04d", id(ss_score));
+                  return std::string(buf);
+
+            # End message
+            - lvgl.widget.update:
+                id: ss_end_msg
+                hidden: !lambda return !id(ss_ending);
+            - lvgl.label.update:
+                id: ss_end_msg
+                text: !lambda |-
+                  return id(ss_won) ? std::string("I WIN!") : std::string("I LOSE!");
+                text_color: !lambda |-
+                  return id(ss_won) ? lv_color_hex(0x00FF00) : lv_color_hex(0xFF4400);

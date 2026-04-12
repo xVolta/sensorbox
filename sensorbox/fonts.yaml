@@ -9,7 +9,7 @@ font:
       - GF_Latin_Kernel
       - GF_Latin_Plus
     extras:
-      - file: 'fonts/materialdesignicons-webfont.ttf'
+      - file: '_fonts/materialdesignicons-webfont.ttf'
         glyphs: [
           "\U000F07D0",  # ha_icon
           "\U000F087B",  # no_ha_icon
@@ -52,3 +52,8 @@ font:
     glyphsets:
       - GF_Latin_Kernel
       - GF_Latin_Plus
+  - file: "gfonts://Press Start 2P"
+    id: font_game
+    size: 14
+    bpp: 4
+    glyphs: "ACDEGIKLMNOPRSTUVWX 0123456789:!^"

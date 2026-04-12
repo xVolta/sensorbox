@@ -102,11 +102,11 @@ sensor:
     i2c_id: i2c_2
     variant: AHT20
     temperature:
-      name: "AHT20-ENS160 Temperature"
+      name: "AHT20/ENS160 Temperature"
       id: temp_aht20_ens
       disabled_by_default: True
     humidity:
-      name: "AHT20-ENS160 Humidity"
+      name: "AHT20/ENS160 Humidity"
       id: hum_aht20_ens
       disabled_by_default: True
     update_interval: 10s
@@ -285,7 +285,7 @@ sensor:
     on_value:
       - if:
           any:
-            lambda: return (isnan(x) || (id(temp_unit_control).state == "${deg_f_str}"));
+            lambda: return (isnan(x) || (id(temp_unit_control).current_option() == "${deg_f_str}"));
           then:
             - lvgl.widget.hide: temp_widget
           else:
@@ -311,7 +311,7 @@ sensor:
     on_value:
       - if:
           condition:
-            lambda: return (isnan(x) || (id(temp_unit_control).state == "${deg_c_str}"));
+            lambda: return (isnan(x) || (id(temp_unit_control).current_option() == "${deg_c_str}"));
           then:
             - lvgl.widget.hide: temp_f_widget
           else:
@@ -360,11 +360,11 @@ sensor:
                   args: [ x ]
                 text_color: !lambda |-
                   if (x > $humid_high) { return lv_color_hex($high_hex); }
-                  else if (x > $humid_medium) { return lv_color_hex($medium_hex); }
-                  else if (x > $humid_low) { return lv_color_hex($low_hex); }
-                  else if (x < $dry_low) { return lv_color_hex($low_hex); }
-                  else if (x < $dry_medium) { return lv_color_hex($medium_hex); }
                   else if (x < $dry_high) { return lv_color_hex($high_hex); }
+                  else if (x > $humid_medium) { return lv_color_hex($medium_hex); }
+                  else if (x < $dry_medium) { return lv_color_hex($medium_hex); }
+                  else if (x > $humid_low) { return lv_color_hex($low_hex); }
+                  else if (x > $dry_low) { return lv_color_hex($low_hex); }
                   else { return lv_color_hex($safe_hex); }
 
   - platform: template
@@ -497,7 +497,6 @@ sensor:
     id: best_pm1
     update_interval: 10s
     device_class: pm1
-    state_class: measurement
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
     lambda: |-
@@ -532,7 +531,6 @@ sensor:
     id: best_pm25
     update_interval: 10s
     device_class: pm25
-    state_class: measurement
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
     lambda: |-
@@ -567,7 +565,6 @@ sensor:
     id: best_pm40
     update_interval: 10s
     device_class: pm10
-    state_class: measurement
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
     lambda: |-
@@ -601,7 +598,6 @@ sensor:
     id: best_pm10
     update_interval: 10s
     device_class: pm10
-    state_class: measurement
     icon: mdi:chemical-weapon
     unit_of_measurement: "${ug_m3_str}"
     lambda: |-
