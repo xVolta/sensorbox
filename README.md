@@ -1,3 +1,7 @@
+2026-05-08 Update:  After reviewing the latest breaking changes in ESPHome 2026.4.1 and newer that prevent variable use across files in a project, I've decided to abandon the use of ESPHome until they achieve a stable platform.  I simply don't have time to update otherwise stable configuration files every month or two to work around upstream brain damage.
+
+---
+
 I liked the idea of Tom's [Sensorbox v2](https://go.toms3d.org/sbr1) project, but when I built it I had performance and reliability issues that caused it to lose the Wi-Fi connection every few minutes.  Eventually I determined these issues were caused by the code handling the display, and started migrating the display code to LVGL.  It didn't take long for me to decide it'd be easier to start from scratch, I found Tom's code hard to follow.  That first attempt got the devices stable on my network, reliably reporting to Home Assistant.  That version was posted on [Printables](https://www.printables.com/model/1130249-3d-printer-emission-sensor-array-sensorbox-v2-lvgl) as a remix of Tom's model, to make it available to other people building his project.
 
 This version adds support for [SEN5x](https://esphome.io/components/sensor/sen5x.html) sensors on the i2c_2 bus (the "extra" i2c positions on Tom's board).
