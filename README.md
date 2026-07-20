@@ -1,4 +1,4 @@
-2026-05-08 Update:  After reviewing the latest breaking changes in ESPHome 2026.4.1 and newer that prevent variable use across files in a project, I've decided to abandon the use of ESPHome until they achieve a stable platform.  I simply don't have time to update otherwise stable configuration files every month or two to work around upstream brain damage.
+2026-07-20 Update: I found a workaround to the ESPHome 2026.4.1 breaking changes.  This release is tested and works with ESPHome 2026.7.0.
 
 ---
 
