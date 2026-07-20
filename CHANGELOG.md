@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 
+## [0.6.0] - 2026-07-20
+### Fixed
+- Fixes for ESPHome Breaking changes.
+  - migration to packages to work around ESPHome's breaking changes around substitutions.
+  - replaced usage of .state property on TemplateSelect objects with .current_option() to support current ESPHome releases
+  - migrated display from deprecated ili9xxx platform to current mipi_spi platform
+
 ## [0.5.1] - 2025-08-16
 ### Fixed
 - Adjusted PM sensor configuration to allow long-term data tracking.
