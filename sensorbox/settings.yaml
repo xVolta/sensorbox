@@ -1,5 +1,4 @@
-  name: sensorbox${id}
-  friendly_name: Sensorbox ${id} - ${location}
+substitutions:
   temp_hot: "25"
   temp_cold: "18"
   dry_high: "15"

@@ -285,7 +285,7 @@ sensor:
     on_value:
       - if:
           any:
-            lambda: return (isnan(x) || (id(temp_unit_control).state == "${deg_f_str}"));
+            lambda: return (isnan(x) || (std::string(id(temp_unit_control).current_option()) == "${deg_f_str}"));
           then:
             - lvgl.widget.hide: temp_widget
           else:
@@ -311,7 +311,7 @@ sensor:
     on_value:
       - if:
           condition:
-            lambda: return (isnan(x) || (id(temp_unit_control).state == "${deg_c_str}"));
+            lambda: return (isnan(x) || (std::string(id(temp_unit_control).current_option()) == "${deg_c_str}"));
           then:
             - lvgl.widget.hide: temp_f_widget
           else:

@@ -90,16 +90,16 @@ psram:
 
 # Set up the display
 display:
-  - platform: ili9xxx
+  - platform: mipi_spi
     model: ILI9341
-    color_palette: 8BIT
     cs_pin: GPIO03
     dc_pin: GPIO04
     reset_pin: GPIO06
     #data_rate: 10MHz
     transform:
-      #mirror_x: true
+      mirror_x: false
       mirror_y: true
+      swap_xy: false
     #show_test_card: true
     color_order: bgr # CHANGE THIS if your screen has colors mapped wrong
     invert_colors: false
